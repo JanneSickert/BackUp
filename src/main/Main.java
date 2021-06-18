@@ -15,8 +15,8 @@ public class Main {
 		UI userInterface = new ui.Cmd();
 		userInterface.showHead();
 		SettingType setting = userInterface.getSettings();
-		rootSource = userInterface.getSourceRootPath();
 		rootDestination = userInterface.getDestinationRootPath();
+		rootSource = userInterface.getSourceRootPath();
 		keyFilePath = null;
 		password = null;
 		if (setting == SettingType.KEY_FILE || setting == SettingType.PASSWORD_AND_KEY_FILE) {

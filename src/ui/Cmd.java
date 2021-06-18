@@ -46,6 +46,8 @@ public class Cmd implements interfaces.UI{
 
 	@Override
 	public String getSourceRootPath() {
+		@SuppressWarnings("resource")
+		final Scanner sc = new Scanner(System.in);
 		p("Path for BackUp source:");
 		String p = sc.nextLine();
 		return p;
@@ -53,6 +55,8 @@ public class Cmd implements interfaces.UI{
 
 	@Override
 	public String getDestinationRootPath() {
+		@SuppressWarnings("resource")
+		final Scanner sc = new Scanner(System.in);
 		p("Path for BackUp destination:");
 		String p = sc.nextLine();
 		return p;

@@ -1,13 +1,15 @@
 package main;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import test.Check_IO;
 
 public class NewBackUp extends Collect{
 
-	ArrayList<String> srcPath = new ArrayList<String>();
+	private ArrayList<String> srcPath = new ArrayList<String>();
+	private String[] relPath;
 	
 	@Override
 	public void doWithFile(File f) {
@@ -34,6 +36,36 @@ public class NewBackUp extends Collect{
 			collectFiles(new File(Main.getRootSourcePath()));
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		relPath = new String[srcPath.size()];
+		makeRelPath();
+		writeRelPath();
+	}
+	
+	private void writeRelPath() {
+		File f = new File(Main.getPathListPath());
+		if (!(f.exists())) {
+			try {
+				f.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			FileWriter fwf = new FileWriter(f, true);
+			for (int i = 0; i < relPath.length - 1; i++) {
+				fwf.write(relPath[i] + "\n");
+			}
+			fwf.write(relPath[relPath.length - 1]);
+			fwf.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void makeRelPath() {
+		for (int i = 0; i < relPath.length; i++) {
+			relPath[i] = getRelPath(srcPath.get(i), Main.getRootSourcePath());
 		}
 	}
 }
