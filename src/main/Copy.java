@@ -16,7 +16,7 @@ public class Copy extends NewBackUp{
 		}
 	}
 	
-	Copy() {
+	public Copy() {
 		super();
 	}
 }
