@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import test.Check_IO;
 
-public class NewBackUp extends Collect{
+public abstract class NewBackUp extends Collect{
 
 	private ArrayList<String> srcPath = new ArrayList<String>();
 	private String[] relPath;
@@ -40,7 +40,16 @@ public class NewBackUp extends Collect{
 		relPath = new String[srcPath.size()];
 		makeRelPath();
 		writeRelPath();
+		moveFiles();
 	}
+
+	private void moveFiles() {
+		for (int i = 0; i < srcPath.size(); i++) {
+			copyFileToDirectory(new File(srcPath.get(i)), new File(Main.getDataPath() + "/" + i));
+		}
+	}
+	
+	protected abstract void copyFileToDirectory(File from, File to);
 	
 	private void writeRelPath() {
 		File f = new File(Main.getPathListPath());

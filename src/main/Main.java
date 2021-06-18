@@ -10,6 +10,7 @@ public class Main {
 	private static String rootDestination = null;
 	private static String keyFilePath = null;
 	private static String password = null;
+	private static String recoveryOutputPath = null;
 	
 	public static void main(String[] args) {
 		UI userInterface = new ui.Cmd();
@@ -27,13 +28,18 @@ public class Main {
 		}
 		if (new File(getSettingsFilePath()).exists()) {
 			boolean update = userInterface.updateOrRecover();
-			
+			if (update) {
+				
+			} else {
+				recoveryOutputPath = userInterface.getRecoveryOutputPath();
+				
+			}
 		} else {
 			File[] root = {new File(getDataPath()), new File(getSettingsPath())};
 			for (File f : root) {
 				f.mkdirs();
 			}
-			new NewBackUp();
+			new Copy();
 		}
 	}
 	
@@ -67,5 +73,9 @@ public class Main {
 	
 	public static String getRootSourcePath() {
 		return rootSource;
+	}
+	
+	public static String getRecoveryOutputPath() {
+		return recoveryOutputPath;
 	}
 }
