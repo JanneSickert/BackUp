@@ -26,13 +26,15 @@ public class Main {
 		if (setting == SettingType.PASSWORD || setting == SettingType.PASSWORD_AND_KEY_FILE) {
 			password = userInterface.getPassword();
 		}
-		if (new File(getSettingsFilePath()).exists()) {
+		if (new File(getPathListPath()).exists()) {
 			boolean update = userInterface.updateOrRecover();
 			if (update) {
 				
 			} else {
 				recoveryOutputPath = userInterface.getRecoveryOutputPath();
-				
+				if (setting == SettingType.COPY_ONLY) {
+					new recover.R_Copy();
+				}
 			}
 		} else {
 			File[] root = {new File(getDataPath()), new File(getSettingsPath())};
