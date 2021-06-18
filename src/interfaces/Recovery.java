@@ -1,6 +1,7 @@
 package interfaces;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -53,5 +54,20 @@ public interface Recovery {
 			arr[i] = path.charAt(i);
 		}
 		return (new String(arr));
+	}
+	
+	public void move(File from, File to);
+	
+	default public void createFolderStructur(String[] folderPath) {
+		for (int i = 0; i < folderPath.length; i++) {
+			new File(folderPath[i]).mkdirs();
+		}
+	}
+	
+	default public void moveAllFiles(ArrayList<String> recoveryOutputPaths) {
+		String backup = main.Main.getDataPath() + "/";
+		for (int i = 0; i < recoveryOutputPaths.size(); i++) {
+			move(new File(backup + i), new File(recoveryOutputPaths.get(i)));
+		}
 	}
 }
