@@ -10,13 +10,14 @@ public class Main {
 	private static String rootDestination = null;
 	private static String keyFilePath = null;
 	private static String password = null;
+	private static String recoveryOutputPath = null;
 	
 	public static void main(String[] args) {
 		UI userInterface = new ui.Cmd();
 		userInterface.showHead();
 		SettingType setting = userInterface.getSettings();
-		rootSource = userInterface.getSourceRootPath();
 		rootDestination = userInterface.getDestinationRootPath();
+		rootSource = userInterface.getSourceRootPath();
 		keyFilePath = null;
 		password = null;
 		if (setting == SettingType.KEY_FILE || setting == SettingType.PASSWORD_AND_KEY_FILE) {
@@ -27,13 +28,18 @@ public class Main {
 		}
 		if (new File(getSettingsFilePath()).exists()) {
 			boolean update = userInterface.updateOrRecover();
-			
+			if (update) {
+				
+			} else {
+				recoveryOutputPath = userInterface.getRecoveryOutputPath();
+				
+			}
 		} else {
 			File[] root = {new File(getDataPath()), new File(getSettingsPath())};
 			for (File f : root) {
 				f.mkdirs();
 			}
-			new NewBackUp();
+			new Copy();
 		}
 	}
 	
@@ -67,5 +73,9 @@ public class Main {
 	
 	public static String getRootSourcePath() {
 		return rootSource;
+	}
+	
+	public static String getRecoveryOutputPath() {
+		return recoveryOutputPath;
 	}
 }

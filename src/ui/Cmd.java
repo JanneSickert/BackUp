@@ -4,8 +4,6 @@ import java.util.Scanner;
 import enums.SettingType;
 
 public class Cmd implements interfaces.UI{
-
-	private final Scanner sc = new Scanner(System.in);
 	
 	private void p(String text) {
 		System.out.println(text);
@@ -18,6 +16,8 @@ public class Cmd implements interfaces.UI{
 
 	@Override
 	public SettingType getSettings() {
+		@SuppressWarnings("resource")
+		final Scanner sc = new Scanner(System.in);
 		p("Type 0 to copy only.");
 		p("Type 1 to encrypt with a password.");
 		p("Type 2 to encrypt with a key file.");
@@ -46,6 +46,8 @@ public class Cmd implements interfaces.UI{
 
 	@Override
 	public String getSourceRootPath() {
+		@SuppressWarnings("resource")
+		final Scanner sc = new Scanner(System.in);
 		p("Path for BackUp source:");
 		String p = sc.nextLine();
 		return p;
@@ -53,6 +55,8 @@ public class Cmd implements interfaces.UI{
 
 	@Override
 	public String getDestinationRootPath() {
+		@SuppressWarnings("resource")
+		final Scanner sc = new Scanner(System.in);
 		p("Path for BackUp destination:");
 		String p = sc.nextLine();
 		return p;
@@ -60,6 +64,8 @@ public class Cmd implements interfaces.UI{
 
 	@Override
 	public boolean updateOrRecover() {
+		@SuppressWarnings("resource")
+		final Scanner sc = new Scanner(System.in);
 		p("Type 0 to recover files from BackUp");
 		p("Type 1 to update the BackUp");
 		int nr = sc.nextInt();
@@ -68,6 +74,8 @@ public class Cmd implements interfaces.UI{
 
 	@Override
 	public String getPathForKeyFile() {
+		@SuppressWarnings("resource")
+		final Scanner sc = new Scanner(System.in);
 		p("Path for key file:");
 		String s = sc.nextLine();
 		return s;
@@ -75,7 +83,18 @@ public class Cmd implements interfaces.UI{
 
 	@Override
 	public String getPassword() {
+		@SuppressWarnings("resource")
+		final Scanner sc = new Scanner(System.in);
 		p("Password:");
+		String s = sc.nextLine();
+		return s;
+	}
+
+	@Override
+	public String getRecoveryOutputPath() {
+		@SuppressWarnings("resource")
+		final Scanner sc = new Scanner(System.in);
+		p("Recovery output path::");
 		String s = sc.nextLine();
 		return s;
 	}

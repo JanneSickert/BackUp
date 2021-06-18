@@ -21,4 +21,6 @@ public interface UI {
 	public String getPathForKeyFile();
 	
 	public String getPassword();
+	
+	public String getRecoveryOutputPath();
 }
