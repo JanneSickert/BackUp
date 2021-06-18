@@ -30,13 +30,10 @@ public class NewBackUp extends Collect{
 	}
 	
 	public NewBackUp() {
-		/**
 		try {
 			collectFiles(new File(Main.getRootSourcePath()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		**/
-		
 	}
 }
