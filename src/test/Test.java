@@ -5,11 +5,11 @@ import java.lang.reflect.Method;
 public class Test {
 
 	public static void main(String[] args) {
-        AtTest<main.NewBackUp> c;
+        AtTest<interfaces.Recovery> c;
         c = new Test.AtTest<>() {
         	@Override
         	public void eql() {
-        		String realOutput = new main.Copy().getRelPath(input[0], input[1]);
+        		String realOutput = new InterfaceTest().getFolderPath(input[0]);
         		if (realOutput.equals(rightOutput)) {
         			System.out.println("Test complete");
         		} else {
@@ -19,7 +19,11 @@ public class Test {
         		System.out.println(rightOutput);
         	}
         };
-        c.doTest(main.NewBackUp.class);
+        c.doTest(interfaces.Recovery.class);
+	}
+	
+	public static class InterfaceTest implements interfaces.Recovery{
+		
 	}
 
 	public static abstract class AtTest<T>{
