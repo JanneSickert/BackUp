@@ -90,13 +90,15 @@ public abstract class Update extends Collect implements PathList {
 		for (int i = 0; i < missingIndex.size(); i++) {
 			super.srcPath.add(absolutSourcePath.get((int) missingIndex.get(i)));
 		}
-		super.relPath = new String[srcPath.size()];
-		makeRelPath();
-		writeRelPath();
-		int to = relDestinationPath.size();
-		for (int i = 0; i < missingIndex.size(); i++) {
-			move(new File(absolutSourcePath.get((int) missingIndex.get(i))), new File(Main.getDataPath() + "/" + to));
-			to++;
+		if (srcPath.size() != 0) {
+			super.relPath = new String[srcPath.size()];
+			makeRelPath();
+			writeRelPath();
+			int to = relDestinationPath.size();
+			for (int i = 0; i < missingIndex.size(); i++) {
+				move(new File(absolutSourcePath.get((int) missingIndex.get(i))), new File(Main.getDataPath() + "/" + to));
+				to++;
+			}
 		}
 	}
 	
