@@ -2,6 +2,8 @@ package interfaces;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import main.Main;
 import test.Check_IO;
 
 public interface Recovery extends PathList{
@@ -46,8 +48,17 @@ public interface Recovery extends PathList{
 		System.out.println("Move file from:" + from.getAbsolutePath() + " to " + to.getAbsolutePath());
 	}
 
+	default public ArrayList<String> addRoot(ArrayList<String> p) {
+		ArrayList<String> res = new ArrayList<String>();
+		for (int i = 0; i < p.size(); i++) {
+			res.add(Main.getRecoveryOutputPath() + "/" + p.get(i));
+		}
+		return res;
+	}
+	
 	default public void start() {
 		ArrayList<String> rpl = getRecoveryPathList();
+		rpl = addRoot(rpl);
 		createFolderStructur(rpl);
 		moveAllFiles(rpl);
 	}

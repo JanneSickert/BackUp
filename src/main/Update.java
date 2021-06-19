@@ -76,13 +76,14 @@ public abstract class Update extends Collect implements PathList {
 		}
 		for (int i = 0; i < relSourcePath.length; i++) {
 			String currentPath = relSourcePath[i];
-			int nr = 0;
+			boolean exists = false;
 			for (int k = 0; k < relDestinationPath.size(); k++) {
-				if (!(currentPath.equals(relDestinationPath.get(k)))) {
-					nr++;
+				if (currentPath.equals(relDestinationPath.get(k))) {
+					exists = true;
+					break;
 				}
 			}
-			if (nr == relDestinationPath.size()) {
+			if (!(exists)) {
 				missingIndex.add((Integer) i);
 			}
 		}
