@@ -29,7 +29,13 @@ public class Main {
 		if (new File(getPathListPath()).exists()) {
 			boolean update = userInterface.updateOrRecover();
 			if (update) {
-				
+				switch (setting) {
+				case COPY_ONLY:
+					new CopyUpdate();
+					break;
+				default:
+					System.exit(100);
+				}
 			} else {
 				recoveryOutputPath = userInterface.getRecoveryOutputPath();
 				if (setting == SettingType.COPY_ONLY) {
