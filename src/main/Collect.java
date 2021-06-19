@@ -49,16 +49,28 @@ abstract class Collect {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-		try {
-			FileWriter fwf = new FileWriter(f, true);
-			for (int i = 0; i < relPath.length - 1; i++) {
-				fwf.write(relPath[i] + "\n");
+			try {
+				FileWriter fwf = new FileWriter(f, true);
+				for (int i = 0; i < relPath.length - 1; i++) {
+					fwf.write(relPath[i] + "\n");
+				}
+				fwf.write(relPath[relPath.length - 1]);
+				fwf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			fwf.write(relPath[relPath.length - 1]);
-			fwf.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} else {
+			try {
+				FileWriter fwf = new FileWriter(f, true);
+				fwf.write("\n");
+				for (int i = 0; i < relPath.length - 1; i++) {
+					fwf.write(relPath[i] + "\n");
+				}
+				fwf.write(relPath[relPath.length - 1]);
+				fwf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

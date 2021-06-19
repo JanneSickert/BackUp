@@ -76,26 +76,29 @@ public abstract class Update extends Collect implements PathList {
 		}
 		for (int i = 0; i < relSourcePath.length; i++) {
 			String currentPath = relSourcePath[i];
-			int nr = 0;
+			boolean exists = false;
 			for (int k = 0; k < relDestinationPath.size(); k++) {
-				if (!(currentPath.equals(relDestinationPath.get(k)))) {
-					nr++;
+				if (currentPath.equals(relDestinationPath.get(k))) {
+					exists = true;
+					break;
 				}
 			}
-			if (nr == relDestinationPath.size()) {
+			if (!(exists)) {
 				missingIndex.add((Integer) i);
 			}
 		}
 		for (int i = 0; i < missingIndex.size(); i++) {
 			super.srcPath.add(absolutSourcePath.get((int) missingIndex.get(i)));
 		}
-		super.relPath = new String[srcPath.size()];
-		makeRelPath();
-		writeRelPath();
-		int to = relDestinationPath.size();
-		for (int i = 0; i < missingIndex.size(); i++) {
-			move(new File(absolutSourcePath.get((int) missingIndex.get(i))), new File(Main.getDataPath() + "/" + to));
-			to++;
+		if (srcPath.size() != 0) {
+			super.relPath = new String[srcPath.size()];
+			makeRelPath();
+			writeRelPath();
+			int to = relDestinationPath.size();
+			for (int i = 0; i < missingIndex.size(); i++) {
+				move(new File(absolutSourcePath.get((int) missingIndex.get(i))), new File(Main.getDataPath() + "/" + to));
+				to++;
+			}
 		}
 	}
 	

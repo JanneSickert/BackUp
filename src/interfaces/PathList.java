@@ -16,7 +16,7 @@ public interface PathList {
 			BufferedReader br = new BufferedReader(fr);
 			String line = "";
 			while ((line = br.readLine()) != null) {
-				list.add(main.Main.getRecoveryOutputPath() + "/" + line);
+				list.add(line);
 			}
 			br.close();
 		} catch (FileNotFoundException e1) {
