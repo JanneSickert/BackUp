@@ -24,8 +24,6 @@ public interface Recovery extends PathList{
 		return (new String(arr));
 	}
 
-	public void move(File from, File to);
-
 	default public void createFolderStructur(ArrayList<String> folderPath) {
 		for (String s : folderPath) {
 			String p = getFolderPath(s);
@@ -34,18 +32,14 @@ public interface Recovery extends PathList{
 		}
 	}
 
-	default public void moveAllFiles(ArrayList<String> recoveryOutputPaths) {
+	default public void moveAllFiles(ArrayList<String> recoveryOutputPaths, Move moveMethod) {
 		String backup = main.Main.getDataPath() + "/";
 		for (int i = 0; i < recoveryOutputPaths.size(); i++) {
 			File a = new File(backup + i);
 			File b = new File(recoveryOutputPaths.get(i));
-			pri(a, b);
-			move(a, b);
+			main.Main.userInterface.move(a.getAbsolutePath(), b.getAbsolutePath());
+			moveMethod.move(a, b);
 		}
-	}
-
-	default public void pri(File from, File to) {
-		System.out.println("Move file from:" + from.getAbsolutePath() + " to " + to.getAbsolutePath());
 	}
 
 	default public ArrayList<String> addRoot(ArrayList<String> p) {
@@ -56,10 +50,10 @@ public interface Recovery extends PathList{
 		return res;
 	}
 	
-	default public void start() {
+	default public void start(Move moveMethod) {
 		ArrayList<String> rpl = getRecoveryPathList();
 		rpl = addRoot(rpl);
 		createFolderStructur(rpl);
-		moveAllFiles(rpl);
+		moveAllFiles(rpl, moveMethod);
 	}
 }

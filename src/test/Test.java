@@ -1,6 +1,5 @@
 package test;
 
-import java.io.File;
 import java.lang.reflect.Method;
 
 public class Test {
@@ -24,13 +23,6 @@ public class Test {
 	}
 	
 	public static class InterfaceTest implements interfaces.Recovery{
-
-		@Override
-		public void move(File from, File to) {
-			// TODO Auto-generated method stub
-			
-		}
-		
 	}
 
 	public static abstract class AtTest<T>{

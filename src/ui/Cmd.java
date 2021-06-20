@@ -98,4 +98,9 @@ public class Cmd implements interfaces.UI{
 		String s = sc.nextLine();
 		return s;
 	}
+
+	@Override
+	public void move(String from, String to) {
+		System.out.println("Move file from:" + from + " to " + to);
+	}
 }

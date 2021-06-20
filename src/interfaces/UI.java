@@ -23,4 +23,6 @@ public interface UI {
 	public String getPassword();
 	
 	public String getRecoveryOutputPath();
+	
+	public void move(String from, String to);
 }
