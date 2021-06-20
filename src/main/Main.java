@@ -21,7 +21,7 @@ public class Main {
 	static Calculate calculateMethod;
 
 	public static void main(String[] args) {
-		userInterface = new ui.Cmd();
+		userInterface = new ui.Source();
 		userInterface.showHead();
 		SettingType setting = userInterface.getSettings();
 		rootDestination = userInterface.getDestinationRootPath();
@@ -41,7 +41,7 @@ public class Main {
 			break;
 		default:
 			calculateMethod = plus;
-			key = generateKey();
+			key = generateKey(setting);
 			moveMethod = getCryptMove();
 		}
 		if (new File(getPathListPath()).exists()) {
@@ -131,9 +131,28 @@ public class Main {
 		});
 	}
 
-	private static byte[] generateKey() {
-		// TODO Auto-generated method stub
-		return null;
+	@SuppressWarnings("incomplete-switch")
+	private static byte[] generateKey(SettingType setting) {
+		byte[] ret = null;
+		switch (setting) {
+		case PASSWORD:
+			ret = password.getBytes();
+			break;
+		case KEY_FILE:
+			if (!Key.keyFileExists()) {
+				Key.createKey();
+			}
+			ret = Key.readKey();
+			break;
+		case PASSWORD_AND_KEY_FILE:
+			byte[] pasBytes = password.getBytes();
+			if (!Key.keyFileExists()) {
+				Key.createKey();
+			}
+			byte[] keyBytes = Key.readKey();
+			ret = Key.mergeToKeys(keyBytes, pasBytes);
+		}
+		return ret;
 	}
 
 	public static String getDataPath() {
