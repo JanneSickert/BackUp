@@ -72,6 +72,7 @@ public class Main {
 		return (new Move() {
 			@Override
 			public void move(File from, File to) {
+				print(from, to);
 				byte[] arr = makeFileToByteArr(from);
 				byte[] cry = encryptOrDecrypt(arr, Main.key, Main.calculateMethod);
 				writeFileFromBytes(to.getAbsolutePath(), cry);
@@ -174,6 +175,7 @@ public class Main {
 	public static Move copy = new Move() {
 		@Override
 		public void move(File from, File to) {
+			print(from, to);
 			try {
 				Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {

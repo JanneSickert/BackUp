@@ -56,6 +56,7 @@ public interface Update extends Collect, PathList{
 				Index in = new Index();
 				in.src = i;
 				in.des = findIndexByRelPath(getRelPath(main.Storage.Update.absolutSourcePath.get(i), Main.getRootSourcePath()));
+				if (in.des == (-2)) continue;
 				replaceList.add(in);
 			}
 		}

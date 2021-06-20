@@ -37,7 +37,6 @@ public interface Recovery extends PathList{
 		for (int i = 0; i < recoveryOutputPaths.size(); i++) {
 			File a = new File(backup + i);
 			File b = new File(recoveryOutputPaths.get(i));
-			main.Main.userInterface.move(a.getAbsolutePath(), b.getAbsolutePath());
 			moveMethod.move(a, b);
 		}
 	}
