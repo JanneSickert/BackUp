@@ -55,8 +55,8 @@ public class Main {
 					calculateMethod = minus;
 					moveMethod = getCryptMove();
 				}
-				new Update() {
-				}.update(moveMethod);
+				new Recovery() {
+				}.start(moveMethod);
 			}
 		} else {
 			File[] root = { new File(getDataPath()), new File(getSettingsPath()) };
