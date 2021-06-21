@@ -18,7 +18,6 @@ public interface NewBackUp extends Collect{
 		makeRelPath();
 		writeRelPath();
 		moveFiles(moveMethod);
-		main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 	}
 
 	private void moveFiles(Move moveMethod) {

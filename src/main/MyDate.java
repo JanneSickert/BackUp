@@ -10,35 +10,44 @@ import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MyDate{
+public class MyDate {
 
-	
-	public static class TimeAndDate{
-		
+	public static class TimeAndDate {
+
 		int houer;
 		int minutes;
 		int sec;
 		int day;
 		int month;
 		int year;
-		
+
 		public boolean isBefore(TimeAndDate tad) {
-			if (year < tad.year) {
+			if (this.year < tad.year) {
 				return true;
+			} else if (this.year > tad.year) {
+				return false;
 			} else {
-				if (month < tad.month) {
+				if (this.month < tad.month) {
 					return true;
+				} else if (this.month > tad.month) {
+					return false;
 				} else {
-					if (day < tad.day) {
+					if (this.day < tad.day) {
 						return true;
+					} else if (this.day > tad.day) {
+						return false;
 					} else {
-						if (houer < tad.houer) {
+						if (this.houer < tad.houer) {
 							return true;
+						} else if (this.houer > tad.houer) {
+							return false;
 						} else {
-							if (minutes < tad.minutes) {
+							if (this.minutes < tad.minutes) {
 								return true;
+							} else if (this.minutes > tad.minutes) {
+								return false;
 							} else {
-								if (sec < tad.sec) {
+								if (this.sec < tad.sec) {
 									return true;
 								} else {
 									return false;
@@ -50,80 +59,43 @@ public class MyDate{
 			}
 		}
 	}
-	
-	
-	public static class CurrentDate{
-		
+
+	public static class CurrentDate {
+
 		public String getTimePoint() {
 			String time = getTime() + "-" + getDate();
 			return time;
 		}
 
 		public String getDate() {
-			  SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-		        Date currentTime = new Date();
-		        String d = formatter.format(currentTime);
+			SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+			Date currentTime = new Date();
+			String d = formatter.format(currentTime);
 			return d;
 		}
-		
+
 		public String getTime() {
-			  SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-		        Date currentTime = new Date();
-		        String d = formatter.format(currentTime);
+			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+			Date currentTime = new Date();
+			String d = formatter.format(currentTime);
 			return d;
-		}
-		
-		public String getYear() {
-			String date = getDate();
-			char[] sdd = {date.charAt(6), date.charAt(7),date.charAt(8),date.charAt(9)};
-			String sd = new String(sdd);
-			return sd;
-		} 
-		
-		public String getMonth() {
-			String date = getDate();
-			char[] c = {date.charAt(3), date.charAt(4)};
-			String out = new String(c);
-			return out;
-		}
-		
-		public String getDay() {
-			String date = getDate();
-			char[] c = {date.charAt(0), date.charAt(1)};
-			String out = new String(c);
-			return out;
-		}
-		
-		private String hm(int a, int b) {
-			String d = getTime();
-			char[] cc = {d.charAt(a), d.charAt(b)};
-			String output = new String(cc);
-			return output;
-		}
-		
-		public String getHour() {
-			return hm(0,1);
-		}
-		
-		public String getMinute() {
-			return hm(3,4);
-		}
-		
-		public String getSekunde() {
-			return hm(6,7);
 		}
 	}
-	
-	public static class BackUpTime{
-		
+
+	public static class BackUpTime {
+
 		/**
 		 * example output: 00:48:34-15.06.2021
+		 * 
 		 * @param path
 		 */
 		public static void createTimeFile(String path) {
 			CurrentDate currentDate = new CurrentDate();
 			String text = currentDate.getTimePoint();
 			File ff = new File(path);
+			if (ff.exists()) {
+				ff.delete();
+			}
 			if (!ff.exists()) {
 				try {
 					ff.createNewFile();
@@ -141,7 +113,7 @@ public class MyDate{
 				}
 			}
 		}
-		
+
 		public static TimeAndDate getTimeFile(String path) {
 			TimeAndDate t = new TimeAndDate();
 			String text = "";
@@ -170,7 +142,7 @@ public class MyDate{
 			t.year = (int) Integer.parseInt(next[1].substring(6));
 			return t;
 		}
-		
+
 		/**
 		 * 
 		 * @param str       zu teilende String
@@ -199,7 +171,7 @@ public class MyDate{
 			arr[1] = new String(hint);
 			return arr;
 		}
-		
+
 		private static int firstIndexOff(String str, char delimiter) {
 			int in = -1;
 			for (int i = 0; i < str.length(); i++) {
@@ -211,14 +183,14 @@ public class MyDate{
 			return in;
 		}
 	}
-	
+
 	public static MyDate.TimeAndDate getFileDate(FileTime time) {
 		String s = time.toString();// 2021-06-14T21:51:22.4115736Z
 		MyDate.TimeAndDate tad = new MyDate.TimeAndDate();
 		tad.year = (int) Integer.parseInt(s.substring(0, 4));
 		tad.month = (int) Integer.parseInt(s.substring(5, 7));
-		tad.year = (int) Integer.parseInt(s.substring(8, 10));
-		tad.houer = (int) Integer.parseInt(s.substring(11, 13));
+		tad.day = (int) Integer.parseInt(s.substring(8, 10));
+		tad.houer = (int) Integer.parseInt(s.substring(11, 13)) + 2;
 		tad.minutes = (int) Integer.parseInt(s.substring(14, 16));
 		tad.sec = (int) Integer.parseInt(s.substring(17, 19));
 		return tad;

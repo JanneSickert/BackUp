@@ -103,4 +103,9 @@ public class Cmd implements interfaces.UI{
 	public void move(String from, String to) {
 		System.out.println("Move file from:" + from + " to " + to);
 	}
+
+	@Override
+	public void finishMessage() {
+		p("finish");
+	}
 }

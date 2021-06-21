@@ -25,4 +25,6 @@ public interface UI {
 	public String getRecoveryOutputPath();
 	
 	public void move(String from, String to);
+	
+	public void finishMessage();
 }

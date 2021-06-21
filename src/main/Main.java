@@ -21,7 +21,7 @@ public class Main {
 	static Calculate calculateMethod;
 
 	public static void main(String[] args) {
-		userInterface = new ui.Source();
+		userInterface = new ui.Cmd();
 		userInterface.showHead();
 		SettingType setting = userInterface.getSettings();
 		rootDestination = userInterface.getDestinationRootPath();
@@ -49,6 +49,7 @@ public class Main {
 			if (update) {
 				new Update() {
 				}.update(moveMethod);
+				main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 			} else {//recovery
 				recoveryOutputPath = userInterface.getRecoveryOutputPath();
 				if (setting != SettingType.COPY_ONLY) {
@@ -65,7 +66,9 @@ public class Main {
 			}
 			new NewBackUp() {
 			}.newBackUp(moveMethod);
+			main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 		}
+		userInterface.finishMessage();
 	}
 
 	private static Move getCryptMove() {
@@ -163,20 +166,12 @@ public class Main {
 		return (rootDestination + "/settings");
 	}
 
-	public static String getSettingsFilePath() {
-		return (getSettingsPath() + "/settings.txt");
-	}
-
 	public static String getPathListPath() {
 		return (getSettingsPath() + "/pathList.txt");
 	}
 
 	public static String getTimeFilePath() {
 		return (getSettingsPath() + "/time.txt");
-	}
-
-	public static String getPassword() {
-		return password;
 	}
 
 	public static String getKeyFilePath() {
