@@ -21,7 +21,7 @@ public class Main {
 	static Calculate calculateMethod;
 
 	public static void main(String[] args) {
-		userInterface = new ui.Cmd();
+		userInterface = new ui.Source();
 		userInterface.showHead();
 		SettingType setting = userInterface.getSettings();
 		rootDestination = userInterface.getDestinationRootPath();
@@ -50,7 +50,7 @@ public class Main {
 				new Update() {
 				}.update(moveMethod);
 				main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
-			} else {//recovery
+			} else {// recovery
 				recoveryOutputPath = userInterface.getRecoveryOutputPath();
 				if (setting != SettingType.COPY_ONLY) {
 					calculateMethod = minus;
@@ -71,67 +71,123 @@ public class Main {
 		userInterface.finishMessage();
 	}
 
+	static class CryptoThread extends Thread {
+
+		private File from;
+		private File to;
+		private byte[] key;
+		private Calculate cryCal;
+
+		CryptoThread(File from, File to, byte[] key, Calculate cryCal) {
+			this.from = from;
+			this.to = to;
+			this.key = key;
+			this.cryCal = cryCal;
+		}
+
+		@Override
+		public void run() {
+			print(from, to);
+			byte[] arr = makeFileToByteArr(from);
+			byte[] cry = encryptOrDecrypt(arr, key, cryCal);
+			writeFileFromBytes(to.getAbsolutePath(), cry);
+		}
+
+		private void print(File a, File b) {
+			main.Main.userInterface.move(a.getAbsolutePath(), b.getAbsolutePath());
+		}
+
+		private byte[] encryptOrDecrypt(byte[] fileInBytes, byte[] key, Calculate method) {
+			int nr_index = 0;
+			for (int i = 0; i < fileInBytes.length; i++) {
+				fileInBytes[i] = (byte) method.calc(fileInBytes[i], key[nr_index]);
+				nr_index++;
+				if (nr_index == key.length) {
+					nr_index = 0;
+				}
+			}
+			return fileInBytes;
+		}
+
+		private byte[] makeFileToByteArr(File f) {
+			byte[] fileInBytes = null;
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(f);
+				long size = f.length();
+				fileInBytes = new byte[(int) size];
+				int by, i = 0;
+				while ((by = fis.read()) != -1)
+					fileInBytes[i++] = (byte) by;
+			} catch (IOException ex) {
+				System.out.println(ex);
+			} finally {
+				if (fis != null)
+					try {
+						fis.close();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+			}
+			return fileInBytes;
+		}
+
+		private void writeFileFromBytes(String path, byte[] fileInBytes) {
+			File f = new File(path);
+			try {
+				if (!(f.exists())) {
+					f.createNewFile();
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			try (FileOutputStream stream = new FileOutputStream(path)) {
+				stream.write(fileInBytes);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static class CryptedMove implements Move {
+
+		final int NR_OF_THREADS = 7;
+		CryptoThread[] thread = new CryptoThread[NR_OF_THREADS];
+		int threadIndex = 0;
+		
+		public CryptedMove() {
+			for (int i = 0; i < NR_OF_THREADS; i++) {
+				thread[i] = null;
+			}
+		}
+
+		public void move(File from, File to) {
+			if (thread[threadIndex] == null) {
+				thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod);
+				thread[threadIndex].start();
+				threadIndex++;
+				if (threadIndex == NR_OF_THREADS) {
+					threadIndex = 0;
+				}
+			} else {
+				boolean b = true;
+				do {
+					if (!(thread[threadIndex].isAlive())) {
+						b = false;
+						thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod);
+						thread[threadIndex].start();
+					}
+					threadIndex++;
+					if (threadIndex == NR_OF_THREADS) {
+						threadIndex = 0;
+					}
+				} while (b);
+			}
+		}
+	}
+
 	private static Move getCryptMove() {
-		return (new Move() {
-			@Override
-			public void move(File from, File to) {
-				print(from, to);
-				byte[] arr = makeFileToByteArr(from);
-				byte[] cry = encryptOrDecrypt(arr, Main.key, Main.calculateMethod);
-				writeFileFromBytes(to.getAbsolutePath(), cry);
-			}
-
-			byte[] encryptOrDecrypt(byte[] fileInBytes, byte[] key, Calculate method) {
-				int nr_index = 0;
-				for (int i = 0; i < fileInBytes.length; i++) {
-					fileInBytes[i] = (byte) method.calc(fileInBytes[i], key[nr_index]);
-					nr_index++;
-					if (nr_index == key.length) {
-						nr_index = 0;
-					}
-				}
-				return fileInBytes;
-			}
-
-			byte[] makeFileToByteArr(File f) {
-				byte[] fileInBytes = null;
-				FileInputStream fis = null;
-				try {
-					fis = new FileInputStream(f);
-					long size = f.length();
-					fileInBytes = new byte[(int) size];
-					int by, i = 0;
-					while ((by = fis.read()) != -1)
-						fileInBytes[i++] = (byte) by;
-				} catch (IOException ex) {
-					System.out.println(ex);
-				} finally {
-					if (fis != null)
-						try {
-							fis.close();
-						} catch (Exception ex) {
-							ex.printStackTrace();
-						}
-				}
-				return fileInBytes;
-			}
-
-			void writeFileFromBytes(String path, byte[] fileInBytes) {
-				File f = new File(path);
-				try {
-					if (!(f.exists())) {
-						f.createNewFile();
-					}
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				try (FileOutputStream stream = new FileOutputStream(path)) {
-					stream.write(fileInBytes);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		return ((Move) new Main.CryptedMove());
 	}
 
 	@SuppressWarnings("incomplete-switch")
