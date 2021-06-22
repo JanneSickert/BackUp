@@ -1,13 +1,20 @@
 package main;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import enums.SettingType;
-import interfaces.*;
+import interfaces.Calculate;
+import interfaces.Move;
+import interfaces.NewBackUp;
+import interfaces.NewOrUpdate;
+import interfaces.Recovery;
+import interfaces.UI;
+import interfaces.Update;
 
 public class Main {
 
@@ -113,26 +120,13 @@ public class Main {
 		}
 
 		private byte[] makeFileToByteArr(File f) {
-			byte[] fileInBytes = null;
-			FileInputStream fis = null;
+			Path path = Paths.get(f.getAbsolutePath());
 			try {
-				fis = new FileInputStream(f);
-				long size = f.length();
-				fileInBytes = new byte[(int) size];
-				int by, i = 0;
-				while ((by = fis.read()) != -1)
-					fileInBytes[i++] = (byte) by;
-			} catch (IOException ex) {
-				System.out.println(ex);
-			} finally {
-				if (fis != null)
-					try {
-						fis.close();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
+				return (Files.readAllBytes(path));
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
 			}
-			return fileInBytes;
 		}
 
 		private void writeFileFromBytes(String path, byte[] fileInBytes) {
@@ -157,13 +151,14 @@ public class Main {
 		final int NR_OF_THREADS = 7;
 		CryptoThread[] thread = new CryptoThread[NR_OF_THREADS];
 		int threadIndex = 0;
-		
+
 		public CryptedMove() {
 			for (int i = 0; i < NR_OF_THREADS; i++) {
 				thread[i] = null;
 			}
 		}
 
+		@Override
 		public void move(File from, File to) {
 			if (thread[threadIndex] == null) {
 				thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod);
@@ -187,7 +182,7 @@ public class Main {
 				} while (b);
 			}
 		}
-		
+
 		@Override
 		public void joinAll() {
 			for (int i = 0; i < NR_OF_THREADS; i++) {
