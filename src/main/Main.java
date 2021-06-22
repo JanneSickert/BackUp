@@ -49,6 +49,7 @@ public class Main {
 			if (update) {
 				new Update() {
 				}.update(moveMethod);
+				moveMethod.joinAll();
 				main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 			} else {// recovery
 				recoveryOutputPath = userInterface.getRecoveryOutputPath();
@@ -58,6 +59,7 @@ public class Main {
 				}
 				new Recovery() {
 				}.start(moveMethod);
+				moveMethod.joinAll();
 			}
 		} else {
 			File[] root = { new File(getDataPath()), new File(getSettingsPath()) };
@@ -66,6 +68,7 @@ public class Main {
 			}
 			new NewBackUp() {
 			}.newBackUp(moveMethod);
+			moveMethod.joinAll();
 			main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 		}
 		userInterface.finishMessage();
@@ -184,6 +187,17 @@ public class Main {
 				} while (b);
 			}
 		}
+		
+		@Override
+		public void joinAll() {
+			for (int i = 0; i < NR_OF_THREADS; i++) {
+				try {
+					thread[i].join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	private static Move getCryptMove() {
@@ -251,6 +265,11 @@ public class Main {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+
+		@Override
+		public void joinAll() {
+			// Use only one thread.
 		}
 	};
 
