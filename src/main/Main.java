@@ -28,7 +28,7 @@ public class Main {
 	static Calculate calculateMethod;
 
 	public static void main(String[] args) {
-		userInterface = new ui.Source();
+		userInterface = new ui.Gui();
 		userInterface.showHead();
 		SettingType setting = userInterface.getSettings();
 		rootDestination = userInterface.getDestinationRootPath();
