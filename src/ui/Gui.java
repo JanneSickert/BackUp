@@ -263,13 +263,13 @@ public class Gui implements UI {
 			frame = new MyFrame(movePanel);
 		}
 		
-		public void setText(String from, String to) {
+		public synchronized void setText(String from, String to) {
 			moveLabel.setText("Move " + from + " to " + to);
 		}
 	}
 
 	@Override
-	public void move(String from, String to) {
+	public synchronized void move(String from, String to) {
 		if (moveGui == null) {
 			moveGui = new MoveGui();
 		}
