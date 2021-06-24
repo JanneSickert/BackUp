@@ -24,7 +24,7 @@ public interface UI {
 	
 	public String getRecoveryOutputPath();
 	
-	public void move(String from, String to);
+	public void move(String from, String to, long lengthFile);
 	
 	public void finishMessage();
 }

@@ -1,28 +1,20 @@
 package test;
 
 import java.lang.reflect.Method;
+import ui.Gui.MoveGui;
 
 public class Test {
 
 	public static void main(String[] args) {
-        AtTest<interfaces.Recovery> c;
+        AtTest<MoveGui> c;
         c = new Test.AtTest<>() {
         	@Override
         	public void eql() {
-        		String realOutput = new InterfaceTest().getFolderPath(input[0]);
-        		if (realOutput.equals(rightOutput)) {
-        			System.out.println("Test complete");
-        		} else {
-        			System.out.println("Test failed");
-        		}
-        		System.out.println(realOutput);
-        		System.out.println(rightOutput);
+        		MoveGui mg = new ui.Gui().new MoveGui();
+        		mg.setText(input[0], input[1]);
         	}
         };
-        c.doTest(interfaces.Recovery.class);
-	}
-	
-	public static class InterfaceTest implements interfaces.Recovery{
+        c.doTest(MoveGui.class);
 	}
 
 	public static abstract class AtTest<T>{

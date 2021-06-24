@@ -1,6 +1,8 @@
 package ui;
 
-import java.awt.Font;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +15,7 @@ import javax.swing.JTextField;
 import enums.RecoverOrUpdate;
 import enums.SettingType;
 import interfaces.UI;
+import test.Check_IO;
 
 public class Gui implements UI {
 
@@ -21,6 +24,7 @@ public class Gui implements UI {
 	public static boolean messageNotSent = true;
 	private static MoveGui moveGui = null;
 	private final int FIELD_LENGTH = 50;
+	private static long copyedLength = 0L;
 
 	class MyFrame extends JFrame {
 
@@ -250,30 +254,64 @@ public class Gui implements UI {
 		return (askPath("Target directory of the data to be restored"));
 	}
 	
-	class MoveGui {
+	static class MovePanel extends JPanel{
 		
-		private JPanel movePanel = new JPanel();
-		private JLabel moveLabel = new JLabel();
-		private Font f = new Font("SansSerif", Font.LAYOUT_LEFT_TO_RIGHT, 14 );
+		private static final long serialVersionUID = -5491547277707113467L;
+		static final int X = 700, Y = 30;
+		
+		@Override
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			Graphics2D g2d = (Graphics2D) g;
+			g2d.setColor(Color.BLACK);
+			g2d.drawRect(3, 4 * Y, X - 50, Y);
+			g2d.setColor(Color.GREEN);
+			double dd = ((double) Gui.copyedLength / main.Main.lengthOfAllFiles) * (X - 50);
+			int x_value = (int) Math.round(dd);
+			g2d.fillRect(4, 4 * Y + 1, x_value, Y - 1);
+		}
+	}
+	
+	public class MoveGui {
+		
+		private MovePanel movePanel = new MovePanel();
+		private JLabel[] moveLabel = new JLabel[4];
 		public MyFrame frame;
 		
-		MoveGui() {
-			moveLabel.setFont(f);
-			movePanel.add(moveLabel);
+		public MoveGui() {
+			movePanel.setLayout(null);
+			for (int i = 0; i < moveLabel.length; i++) {
+				moveLabel[i] = new JLabel();
+				if (i % 2 == 0) {
+					moveLabel[i].setSize(MovePanel.X, MovePanel.Y);
+					moveLabel[i].setLocation(0, i * MovePanel.Y);
+				} else {
+					moveLabel[i].setSize(MovePanel.X, MovePanel.Y);
+					moveLabel[i].setLocation(50, i * MovePanel.Y);
+				}
+				movePanel.add(moveLabel[i]);
+			}
 			frame = new MyFrame(movePanel);
 		}
 		
+		@Check_IO(input = {"C:/from/testFile.txt", "C:/to/0"})
 		public synchronized void setText(String from, String to) {
-			moveLabel.setText("Move " + from + " to " + to);
+			String[] text = {"Move:", from, "to:", to};
+			for (int i = 0; i < moveLabel.length; i++) {
+				moveLabel[i].setText(text[i]);
+			}
+			movePanel.revalidate();
+			movePanel.repaint();
 		}
 	}
 
 	@Override
-	public synchronized void move(String from, String to) {
+	public synchronized void move(String from, String to, long lengthFile) {
 		if (moveGui == null) {
 			moveGui = new MoveGui();
 		}
 		moveGui.setText(from, to);
+		copyedLength = copyedLength + lengthFile;
 	}
 
 	@Override

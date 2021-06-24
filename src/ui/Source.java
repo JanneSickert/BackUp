@@ -59,7 +59,7 @@ public class Source implements interfaces.UI{
 	}
 
 	@Override
-	public void move(String from, String to) {
+	public void move(String from, String to, long lengthFile) {
 		System.out.println("Move file from:" + from + " to " + to);
 	}
 	

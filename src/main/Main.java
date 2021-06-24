@@ -15,6 +15,7 @@ import interfaces.NewOrUpdate;
 import interfaces.Recovery;
 import interfaces.UI;
 import interfaces.Update;
+import interfaces.Collect;
 
 public class Main {
 
@@ -25,6 +26,7 @@ public class Main {
 	private static String recoveryOutputPath = null;
 	private static byte[] key;
 	public static UI userInterface;
+	public static long lengthOfAllFiles = 0L;
 	static Calculate calculateMethod;
 
 	public static void main(String[] args) {
@@ -33,6 +35,7 @@ public class Main {
 		SettingType setting = userInterface.getSettings();
 		rootDestination = userInterface.getDestinationRootPath();
 		rootSource = userInterface.getSourceRootPath();
+		getLengthOfAllFiles();
 		keyFilePath = null;
 		password = null;
 		if (setting == SettingType.KEY_FILE || setting == SettingType.PASSWORD_AND_KEY_FILE) {
@@ -81,6 +84,21 @@ public class Main {
 		userInterface.finishMessage();
 	}
 
+	private static void getLengthOfAllFiles() {
+		Collect collectLarge = new Collect() {
+		};
+		try {
+			collectLarge.collectFiles(new File(rootSource), new NewOrUpdate() {
+				@Override
+				public void doWithFile(File f) {
+					lengthOfAllFiles = lengthOfAllFiles + f.length();
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	static class CryptoThread extends Thread {
 
 		private File from;
@@ -104,7 +122,7 @@ public class Main {
 		}
 
 		private void print(File a, File b) {
-			main.Main.userInterface.move(a.getAbsolutePath(), b.getAbsolutePath());
+			main.Main.userInterface.move(a.getAbsolutePath(), b.getAbsolutePath(), a.length());
 		}
 
 		private byte[] encryptOrDecrypt(byte[] fileInBytes, byte[] key, Calculate method) {

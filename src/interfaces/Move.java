@@ -9,6 +9,6 @@ public interface Move {
 	public void joinAll();
 	
 	default public void print(File a, File b) {
-		main.Main.userInterface.move(a.getAbsolutePath(), b.getAbsolutePath());
+		main.Main.userInterface.move(a.getAbsolutePath(), b.getAbsolutePath(), a.length());
 	}
 }

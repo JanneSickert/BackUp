@@ -100,7 +100,7 @@ public class Cmd implements interfaces.UI{
 	}
 
 	@Override
-	public synchronized void move(String from, String to) {
+	public synchronized void move(String from, String to, long lengthFile) {
 		System.out.println("Move file from:" + from + " to " + to);
 	}
 

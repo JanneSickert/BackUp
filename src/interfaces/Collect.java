@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import test.Check_IO;
 
-interface Collect {
+public interface Collect {
 	
 	default public void collectFiles(File from, NewOrUpdate method) throws IOException {
 		File[] fileList = from.listFiles();
