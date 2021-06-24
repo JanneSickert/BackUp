@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JFileChooser;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import enums.RecoverOrUpdate;
@@ -103,20 +104,36 @@ public class Gui implements UI {
 
 		private static final long serialVersionUID = -3384453354229902144L;
 		private String path;
+		
+		private class ChoosePath {
+			
+			private String cD;
+
+			/**
+			 * Open a frame to choose a path.
+			 */
+			public ChoosePath() {
+				JFileChooser chooser = new JFileChooser();
+				@SuppressWarnings("unused")
+				int c = chooser.showSaveDialog(null);
+				cD = chooser.getSelectedFile().getAbsolutePath();
+			}
+			
+			/**
+			 * 
+			 * @return The path which was selected in the constructor.
+			 */
+			public String getPath() {
+				return this.cD;
+			}
+		}
 
 		GetPath(String name) {
 			super();
-			final int X = 200, Y = 50;
 			messageNotSent = true;
 			JLabel label = new JLabel(name);
-			label.setLocation(0, 200);
-			label.setSize(X, Y);
 			JTextField jtf = new JTextField(FIELD_LENGTH);
-			jtf.setLocation(X, 200);
-			jtf.setSize(X, Y);
 			JButton enter = new JButton("ENTER");
-			enter.setLocation(X * 2, 200);
-			enter.setSize(X, Y);
 			ActionListener lal = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -126,9 +143,18 @@ public class Gui implements UI {
 			};
 			enter.addActionListener(lal);
 			jtf.addKeyListener(new KeyHandler(lal));
+			JButton fileChooserButton = new JButton("Open file chooser");
+			fileChooserButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ChoosePath cp = new ChoosePath();
+					jtf.setText(cp.getPath());
+				}
+			});
 			this.add(label);
 			this.add(jtf);
 			this.add(enter);
+			this.add(fileChooserButton);
 		}
 
 		public String getPath() {
@@ -170,17 +196,10 @@ public class Gui implements UI {
 
 		GetPassword() {
 			super();
-			final int X = 200, Y = 50;
 			messageNotSent = true;
 			JLabel label = new JLabel("Password");
-			label.setLocation(0, 200);
-			label.setSize(X, Y);
 			JPasswordField jpf = new JPasswordField(FIELD_LENGTH);
-			jpf.setLocation(X, 200);
-			jpf.setSize(X, Y);
 			JButton enter = new JButton("ENTER");
-			enter.setLocation(X * 2, 200);
-			enter.setSize(X, Y);
 			ActionListener lal = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
