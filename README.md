@@ -3,10 +3,10 @@ Create a encrypted backup with a fast update mode.
 <br>
 The update mode only copies new and changed files.
 <h2>Speed Copy</h2>
-- My program: 12.9s for 3.1GB
+- My program: 12.9s for 3.1GB<br>
 - Windows:    24.5s for 3.1GB
 <h2>Speed encryption</h2>
-- My program: 12.5s for 3.1GB
+- My program: 12.5s for 3.1GB<br>
 - win rar:    1min 17.7s for 3.1GB
 <br>
 But the speed has its price. I don't use any key expansion or compression algorithms.
