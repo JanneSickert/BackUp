@@ -11,6 +11,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JFileChooser;
 import javax.swing.JPasswordField;
@@ -28,6 +29,8 @@ public class Gui implements UI {
 	private static MoveGui moveGui = null;
 	private final int FIELD_LENGTH = 50;
 	private static long copyedLength = 0L;
+	private final String ERROR_MESSAGE = "The text field is empty or does not contain a valid file path.",
+			ERROR_MESSAGE_PASSWORD = "The password field is empty!";
 
 	class MyFrame extends JFrame {
 
@@ -127,6 +130,25 @@ public class Gui implements UI {
 				return this.cD;
 			}
 		}
+		
+		private boolean validPath(String path) {
+			boolean[] b = {false, false};
+			for (int i = 0; i < path.length(); i++) {
+				if (path.charAt(i) == ':') {
+					b[0] = true;
+				}
+			}
+			for (int i = 0; i < path.length(); i++) {
+				if (path.charAt(i) == '/' || path.charAt(i) == '\\') {
+					b[1] = true;
+				}
+			}
+			if (path.equals("")) {
+				return false;
+			} else {
+				return (b[0] && b[1]);
+			}
+		}
 
 		GetPath(String name) {
 			super();
@@ -138,7 +160,11 @@ public class Gui implements UI {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					path = jtf.getText();
-					messageNotSent = false;
+					if (!(validPath(path))) {
+						JOptionPane.showMessageDialog(null, ERROR_MESSAGE, "ERROR",JOptionPane.OK_CANCEL_OPTION);
+					} else {
+						messageNotSent = false;
+					}
 				}
 			};
 			enter.addActionListener(lal);
@@ -149,6 +175,11 @@ public class Gui implements UI {
 				public void actionPerformed(ActionEvent e) {
 					ChoosePath cp = new ChoosePath();
 					jtf.setText(cp.getPath());
+					if (!(validPath(jtf.getText()))) {
+						JOptionPane.showMessageDialog(null, ERROR_MESSAGE, "ERROR",JOptionPane.OK_CANCEL_OPTION);
+					} else {
+						messageNotSent = false;
+					}
 				}
 			});
 			this.add(label);
@@ -204,7 +235,11 @@ public class Gui implements UI {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					password = new String(jpf.getPassword());
-					messageNotSent = false;
+					if (password.equals("")) {
+						JOptionPane.showMessageDialog(null, ERROR_MESSAGE_PASSWORD, "ERROR",JOptionPane.OK_CANCEL_OPTION);
+					} else {
+						messageNotSent = false;
+					}
 				}
 			};
 			enter.addActionListener(lal);
