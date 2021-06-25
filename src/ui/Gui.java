@@ -320,7 +320,7 @@ public class Gui implements UI {
 			g2d.setColor(Color.GREEN);
 			double dd = ((double) Gui.copyedLength / main.Main.lengthOfAllFiles) * (X - 50);
 			int x_value = (int) Math.round(dd);
-			g2d.fillRect(4, 4 * Y + 1, x_value, Y - 1);
+			g2d.fillRect(4, 4 * Y + 1, x_value - 1, Y - 1);
 		}
 	}
 
