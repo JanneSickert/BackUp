@@ -29,8 +29,8 @@ public class Gui implements UI {
 	private static MoveGui moveGui = null;
 	private final int FIELD_LENGTH = 50;
 	private static long copyedLength = 0L;
-	private final String ERROR_MESSAGE = "The text field is empty or does not contain a valid file path.",
-			ERROR_MESSAGE_PASSWORD = "The password field is empty!";
+	private final String ERROR_MESSAGE = "The text field is empty or does not contain a valid file path.";
+	private final String[] ERROR_MESSAGE_PASSWORD = {"The password field is empty!", "The passwords are different!"};
 
 	class MyFrame extends JFrame {
 
@@ -223,29 +223,52 @@ public class Gui implements UI {
 	class GetPassword extends JPanel {
 
 		private static final long serialVersionUID = -3384453354229902144L;
-		private String password;
+		private String password, confirm_password;
 
 		GetPassword() {
 			super();
+			setLayout(null);
 			messageNotSent = true;
-			JLabel label = new JLabel("Password");
+			int SIZE_X = 150, SIZE_Y = 20;
+			JLabel label = new JLabel("Password:");
+			label.setLocation(2, 2);
+			label.setSize(SIZE_X, SIZE_Y);
 			JPasswordField jpf = new JPasswordField(FIELD_LENGTH);
+			jpf.setLocation(200, 2);
+			jpf.setSize(SIZE_X * 3, SIZE_Y);
+			JLabel label2 = new JLabel("confirm password:");
+			label2.setLocation(2, 50);
+			label2.setSize(SIZE_X, SIZE_Y);
+			JPasswordField jpf_confirm = new JPasswordField(FIELD_LENGTH);
+			jpf_confirm.setLocation(200, 50);
+			jpf_confirm.setSize(SIZE_X * 3, SIZE_Y);
 			JButton enter = new JButton("ENTER");
+			enter.setLocation(200, 90);
+			enter.setSize(SIZE_X, (int) (SIZE_Y * 1.5));
 			ActionListener lal = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					password = new String(jpf.getPassword());
-					if (password.equals("")) {
-						JOptionPane.showMessageDialog(null, ERROR_MESSAGE_PASSWORD, "ERROR",JOptionPane.OK_CANCEL_OPTION);
+					confirm_password = new String(jpf_confirm.getPassword());
+					if (password.equals("") || confirm_password.equals("")) {
+						JOptionPane.showMessageDialog(null, ERROR_MESSAGE_PASSWORD[0], "ERROR",JOptionPane.OK_CANCEL_OPTION);
 					} else {
-						messageNotSent = false;
+						if (password.equals(confirm_password)) {
+							messageNotSent = false;
+						} else {
+							JOptionPane.showMessageDialog(null, ERROR_MESSAGE_PASSWORD[1], "ERROR",JOptionPane.OK_CANCEL_OPTION);
+						}
 					}
 				}
 			};
 			enter.addActionListener(lal);
-			jpf.addKeyListener(new KeyHandler(lal));
+			KeyHandler kh = new KeyHandler(lal);
+			jpf.addKeyListener(kh);
+			jpf_confirm.addKeyListener(kh);
 			this.add(label);
 			this.add(jpf);
+			this.add(label2);
+			this.add(jpf_confirm);
 			this.add(enter);
 		}
 
