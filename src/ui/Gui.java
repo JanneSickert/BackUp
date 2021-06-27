@@ -57,6 +57,7 @@ public class Gui implements UI {
 
 	@Override
 	public SettingType getSettings() {
+		messageNotSent = true;
 		final int NR_ELEMENTS = 4;
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 4));
@@ -426,6 +427,6 @@ public class Gui implements UI {
 
 	@Override
 	public void finishMessage() {
-		moveGui.frame.setVisible(false);
+		System.exit(0);
 	}
 }

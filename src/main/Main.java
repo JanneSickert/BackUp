@@ -32,12 +32,29 @@ public class Main {
 	public static void main(String[] args) {
 		userInterface = new ui.Gui();
 		userInterface.showHead();
-		SettingType setting = userInterface.getSettings();
 		rootDestination = userInterface.getDestinationRootPath();
-		rootSource = userInterface.getSourceRootPath();
+		SettingType setting = null;
+		boolean settingFileExists = new File(getSettingTypeFilePath()).exists();
+		ImportExport ix_setting = new ImportExport(new File(getSettingTypeFilePath()));
+		ImportExport ix_source = new ImportExport(new File(getSourceFilePath()));
+		File[] root = { new File(getDataPath()), new File(getSettingsPath()) };
+		for (File f : root) {
+			f.mkdirs();
+		}
+		if (settingFileExists) {
+			String str = ix_setting.inport();
+			System.out.println(str);
+			setting = SettingType.getTypeByName(str);
+			System.out.println(setting.toString());
+			rootSource = ix_source.inport();
+			System.out.println(rootSource);
+		} else {
+			rootSource = userInterface.getSourceRootPath();
+			setting = userInterface.getSettings();
+			ix_setting.export(setting.toString());
+			ix_source.export(rootSource);
+		}
 		getLengthOfAllFiles();
-		keyFilePath = null;
-		password = null;
 		if (setting == SettingType.KEY_FILE || setting == SettingType.PASSWORD_AND_KEY_FILE) {
 			keyFilePath = userInterface.getPathForKeyFile();
 		}
@@ -72,10 +89,6 @@ public class Main {
 				moveMethod.joinAll();
 			}
 		} else {
-			File[] root = { new File(getDataPath()), new File(getSettingsPath()) };
-			for (File f : root) {
-				f.mkdirs();
-			}
 			new NewBackUp() {
 			}.newBackUp(moveMethod);
 			moveMethod.joinAll();
@@ -255,6 +268,14 @@ public class Main {
 
 	public static String getTimeFilePath() {
 		return (getSettingsPath() + "/time.txt");
+	}
+	
+	private static String getSourceFilePath() {
+		return (getSettingsPath() + "/source.txt");
+	}
+	
+	private static String getSettingTypeFilePath() {
+		return (getSettingsPath() + "/settingType.txt");
 	}
 
 	public static String getKeyFilePath() {
