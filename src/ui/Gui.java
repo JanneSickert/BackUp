@@ -118,8 +118,7 @@ public class Gui implements UI {
 			 */
 			public ChoosePath() {
 				JFileChooser chooser = new JFileChooser();
-				@SuppressWarnings("unused")
-				int c = chooser.showSaveDialog(null);
+				chooser.showSaveDialog(null);
 				cD = chooser.getSelectedFile().getAbsolutePath();
 			}
 			
@@ -175,12 +174,8 @@ public class Gui implements UI {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					ChoosePath cp = new ChoosePath();
-					jtf.setText(cp.getPath());
-					if (!(validPath(jtf.getText()))) {
-						JOptionPane.showMessageDialog(null, ERROR_MESSAGE, "ERROR",JOptionPane.OK_CANCEL_OPTION);
-					} else {
-						messageNotSent = false;
-					}
+					String local_path = cp.getPath();
+					jtf.setText(local_path);
 				}
 			});
 			this.add(label);

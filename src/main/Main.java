@@ -43,11 +43,8 @@ public class Main {
 		}
 		if (settingFileExists) {
 			String str = ix_setting.inport();
-			System.out.println(str);
 			setting = SettingType.getTypeByName(str);
-			System.out.println(setting.toString());
 			rootSource = ix_source.inport();
-			System.out.println(rootSource);
 		} else {
 			rootSource = userInterface.getSourceRootPath();
 			setting = userInterface.getSettings();
