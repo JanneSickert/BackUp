@@ -10,7 +10,9 @@ public interface NewBackUp extends Collect{
 	default public void newBackUp(Move moveMethod) {
 		initVars();
 		try {
+			main.Main.userInterface.showLoadingScreen("Missing files are determined...");
 			collectFiles(new File(Main.getRootSourcePath()), main.Main.newBackUp);
+			main.Main.userInterface.closeLoadingScreen();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

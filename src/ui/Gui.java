@@ -480,11 +480,12 @@ public class Gui implements UI {
 		    	  pannel.repaint();
 		}});
 		timer.start();
+		loadingFrame.setVisible(true);
 	}
 
 	@Override
 	public void closeLoadingScreen() {
 		timer.stop();
-		loadingFrame = null;
+		loadingFrame.setVisible(false);
 	}
 }

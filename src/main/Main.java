@@ -51,7 +51,7 @@ public class Main {
 			ix_setting.export(setting.toString());
 			ix_source.export(rootSource);
 		}
-		userInterface.showLoadingScreen("Existing data are determined...");
+		userInterface.showLoadingScreen("Determine amount of data...");
 		getLengthOfAllFiles();
 		userInterface.closeLoadingScreen();
 		if (setting == SettingType.KEY_FILE || setting == SettingType.PASSWORD_AND_KEY_FILE) {

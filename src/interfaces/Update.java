@@ -42,6 +42,7 @@ public interface Update extends Collect, PathList{
 		MyDate.TimeAndDate backUpDate = MyDate.BackUpTime.getTimeFile(Main.getTimeFilePath());
 		BasicFileAttributes attrs = null;
 		Path path = null;
+		main.Main.userInterface.showLoadingScreen("Changed files are determined...");
 		for (int i = 0; i < main.Storage.Update.absolutSourcePath.size(); i++) {
 			path = new File(main.Storage.Update.absolutSourcePath.get(i)).toPath();
 			try {
@@ -60,6 +61,7 @@ public interface Update extends Collect, PathList{
 				replaceList.add(in);
 			}
 		}
+		main.Main.userInterface.closeLoadingScreen();
 		for (int i = 0; i < replaceList.size(); i++) {
 			File dataPath = new File(Main.getDataPath() + "/" + replaceList.get(i).des);
 			dataPath.delete();
@@ -70,7 +72,9 @@ public interface Update extends Collect, PathList{
 	default public void moveMissingFiles(Move moveMethod) {
 		ArrayList<Integer> missingIndex = new ArrayList<Integer>();
 		try {
+			main.Main.userInterface.showLoadingScreen("Missing files are determined...");
 			collectFiles(new File(Main.getRootSourcePath()), main.Main.update);
+			main.Main.userInterface.closeLoadingScreen();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
