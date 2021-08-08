@@ -50,9 +50,13 @@ public interface Recovery extends PathList{
 	}
 	
 	default public void start(Move moveMethod) {
+		main.Main.userInterface.showLoadingScreen("Determines data to be restored...");
 		ArrayList<String> rpl = getRecoveryPathList();
 		rpl = addRoot(rpl);
+		main.Main.userInterface.closeLoadingScreen();
+		main.Main.userInterface.showLoadingScreen("Creates folder structure...");
 		createFolderStructur(rpl);
+		main.Main.userInterface.closeLoadingScreen();
 		moveAllFiles(rpl, moveMethod);
 	}
 }
