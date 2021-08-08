@@ -67,4 +67,14 @@ public class Source implements interfaces.UI{
 	public void finishMessage() {
 		p("finish");
 	}
+
+	@Override
+	public void showLoadingScreen(String message) {
+		p(message);
+	}
+
+	@Override
+	public void closeLoadingScreen() {
+		p("finish loading");
+	}
 }

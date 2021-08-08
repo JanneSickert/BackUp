@@ -15,6 +15,8 @@ public class Test {
         	}
         };
         c.doTest(MoveGui.class);
+        ui.Gui gui = new ui.Gui();
+        gui.showLoadingScreen("test message............");
 	}
 
 	public static abstract class AtTest<T>{

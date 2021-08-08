@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -16,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JFileChooser;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import enums.RecoverOrUpdate;
 import enums.SettingType;
 import interfaces.UI;
@@ -31,6 +33,9 @@ public class Gui implements UI {
 	private static long copyedLength = 0L;
 	private final String ERROR_MESSAGE = "The text field is empty or does not contain a valid file path.";
 	private final String[] ERROR_MESSAGE_PASSWORD = {"The password field is empty!", "The passwords are different!"};
+	private Timer timer;
+	@SuppressWarnings("unused")
+	private MyFrame loadingFrame = null;
 
 	class MyFrame extends JFrame {
 
@@ -423,5 +428,63 @@ public class Gui implements UI {
 	@Override
 	public void finishMessage() {
 		System.exit(0);
+	}
+
+	static class LoadingPannel extends JPanel {
+
+		private static final long serialVersionUID = -683315803839846527L;
+		private String message = null;
+		private int ballIndex = 0;
+
+		@Override
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			Graphics2D g2d = (Graphics2D) g;
+			g2d.setColor(Color.BLACK);
+			final int X = 510, Y = 10, SIZE = 140;
+			final int r = 60;
+			g2d.drawOval(X, Y, SIZE, SIZE);
+			g2d.drawOval(X + 20, Y + 20, SIZE - 40, SIZE - 40);
+			Font font = new Font("Helvetica", Font.BOLD, 30);
+			g2d.setFont(font);
+			g2d.setColor(new Color(0, 155, 0));
+			g2d.drawString(message, 10, 70);
+			g2d.setColor(new Color(0, 0, 155));
+			g2d.fillOval(
+					((int) Math.round(r * Math.cos((double) (ballIndex / Math.PI)) + X + r)),
+					((int) Math.round(r * Math.sin((double) (ballIndex / Math.PI)) + Y + r)),
+					20,
+					20);
+		}
+		
+		LoadingPannel(String message) {
+			this.message = message;
+		}
+		
+		public void nextBallIndex() {
+			ballIndex++;
+			if (ballIndex == Integer.MAX_VALUE) {
+				ballIndex = 0;
+			}
+		}
+	}
+
+	@Override
+	public void showLoadingScreen(String message) {
+		LoadingPannel pannel = new LoadingPannel(message);
+		loadingFrame = new MyFrame(pannel);
+		timer = new Timer(120, new ActionListener() { 
+		     public void actionPerformed(ActionEvent e) { 
+		    	  pannel.nextBallIndex();
+		    	  pannel.revalidate();
+		    	  pannel.repaint();
+		}});
+		timer.start();
+	}
+
+	@Override
+	public void closeLoadingScreen() {
+		timer.stop();
+		loadingFrame = null;
 	}
 }

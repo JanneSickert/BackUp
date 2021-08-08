@@ -27,4 +27,8 @@ public interface UI {
 	public void move(String from, String to, long lengthFile);
 	
 	public void finishMessage();
+	
+	public void showLoadingScreen(String message);
+	
+	public void closeLoadingScreen();
 }
