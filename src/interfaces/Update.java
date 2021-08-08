@@ -71,10 +71,9 @@ public interface Update extends Collect, PathList{
 
 	default public void moveMissingFiles(Move moveMethod) {
 		ArrayList<Integer> missingIndex = new ArrayList<Integer>();
+		main.Main.userInterface.showLoadingScreen("Missing files are determined...");
 		try {
-			main.Main.userInterface.showLoadingScreen("Missing files are determined...");
 			collectFiles(new File(Main.getRootSourcePath()), main.Main.update);
-			main.Main.userInterface.closeLoadingScreen();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -104,10 +103,13 @@ public interface Update extends Collect, PathList{
 			makeRelPath();
 			writeRelPath();
 			int to = main.Storage.Update.relDestinationPath.size();
+			main.Main.userInterface.closeLoadingScreen();
 			for (int i = 0; i < missingIndex.size(); i++) {
 				moveMethod.move(new File(main.Storage.Update.absolutSourcePath.get((int) missingIndex.get(i))), new File(Main.getDataPath() + "/" + to));
 				to++;
 			}
+		} else {
+			main.Main.userInterface.closeLoadingScreen();
 		}
 	}
 }
