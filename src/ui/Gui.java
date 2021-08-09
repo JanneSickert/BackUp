@@ -9,6 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -487,5 +490,12 @@ public class Gui implements UI {
 	public void closeLoadingScreen() {
 		timer.stop();
 		loadingFrame.setVisible(false);
+	}
+
+	@Override
+	public void ShowNotFoundFiles(ArrayList<File> list) {
+		for (File f : list) {
+			System.out.println("missing file: " + f.getAbsolutePath());
+		}
 	}
 }

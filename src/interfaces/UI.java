@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.io.File;
+import java.util.ArrayList;
 import enums.SettingType;
 
 public interface UI {
@@ -31,4 +33,6 @@ public interface UI {
 	public void showLoadingScreen(String message);
 	
 	public void closeLoadingScreen();
+	
+	public void ShowNotFoundFiles(ArrayList<File> list);
 }

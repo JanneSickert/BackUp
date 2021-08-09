@@ -1,5 +1,7 @@
 package ui;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 import enums.SettingType;
 
@@ -117,5 +119,12 @@ public class Cmd implements interfaces.UI{
 	@Override
 	public void closeLoadingScreen() {
 		p("finish loading");
+	}
+
+	@Override
+	public void ShowNotFoundFiles(ArrayList<File> list) {
+		for (File f : list) {
+			p("missing file: " + f.getAbsolutePath());
+		}
 	}
 }

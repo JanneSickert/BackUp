@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import enums.SettingType;
 import interfaces.Calculate;
 import interfaces.Move;
@@ -28,6 +29,7 @@ public class Main {
 	public static UI userInterface;
 	public static long lengthOfAllFiles = 0L;
 	static Calculate calculateMethod;
+	protected static ArrayList<File> errorFiles = new ArrayList<File>();
 
 	public static void main(String[] args) {
 		userInterface = new ui.Gui();
@@ -76,6 +78,7 @@ public class Main {
 				new Update() {
 				}.update(moveMethod);
 				moveMethod.joinAll();
+				userInterface.ShowNotFoundFiles(errorFiles);// TODO Try to load this at the end.
 				main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 			} else {// recovery
 				recoveryOutputPath = userInterface.getRecoveryOutputPath();
@@ -111,7 +114,7 @@ public class Main {
 		}
 	}
 
-	static class CryptoThread extends Thread {
+	public static class CryptoThread extends Thread {
 
 		private File from;
 		private File to;
@@ -129,8 +132,16 @@ public class Main {
 		public void run() {
 			print(from, to);
 			byte[] arr = makeFileToByteArr(from);
-			byte[] cry = encryptOrDecrypt(arr, key, cryCal);
-			writeFileFromBytes(to.getAbsolutePath(), cry);
+			if (arr == null) {
+				addErrorFile(from);
+			} else {
+				byte[] cry = encryptOrDecrypt(arr, key, cryCal);
+				writeFileFromBytes(to.getAbsolutePath(), cry);
+			}
+		}
+		
+		public static synchronized void addErrorFile(File f) {
+			errorFiles.add(f);
 		}
 
 		private void print(File a, File b) {

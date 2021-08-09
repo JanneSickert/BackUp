@@ -1,5 +1,8 @@
 package ui;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import enums.SettingType;
 
 public class Source implements interfaces.UI{
@@ -76,5 +79,12 @@ public class Source implements interfaces.UI{
 	@Override
 	public void closeLoadingScreen() {
 		p("finish loading");
+	}
+	
+	@Override
+	public void ShowNotFoundFiles(ArrayList<File> list) {
+		for (File f : list) {
+			p("missing file: " + f.getAbsolutePath());
+		}
 	}
 }
