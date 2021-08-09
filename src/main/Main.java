@@ -32,6 +32,7 @@ public class Main {
 	protected static ArrayList<File> errorFiles = new ArrayList<File>();
 
 	public static void main(String[] args) {
+		System.out.println("@version 1.1");
 		userInterface = new ui.Gui();
 		userInterface.showHead();
 		rootDestination = userInterface.getDestinationRootPath();
@@ -78,7 +79,6 @@ public class Main {
 				new Update() {
 				}.update(moveMethod);
 				moveMethod.joinAll();
-				userInterface.ShowNotFoundFiles(errorFiles);// TODO Try to load this at the end.
 				main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 			} else {// recovery
 				recoveryOutputPath = userInterface.getRecoveryOutputPath();
@@ -96,6 +96,7 @@ public class Main {
 			moveMethod.joinAll();
 			main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 		}
+		userInterface.ShowNotFoundFiles(errorFiles);
 		userInterface.finishMessage();
 	}
 
@@ -307,7 +308,7 @@ public class Main {
 			try {
 				Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
-				e.printStackTrace();
+				errorFiles.add(from);
 			}
 		}
 

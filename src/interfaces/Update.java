@@ -9,6 +9,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import main.Main;
 import main.MyDate;
+import comment.Comment;
 
 public interface Update extends Collect, PathList{
 
@@ -37,6 +38,12 @@ public interface Update extends Collect, PathList{
 		int src, des;
 	}
 	
+	@Comment(make = "Dest compares the modification date "
+			+ "of all files in the source directory with "
+			+ "the date of the last update, then the files are processed.",
+			param = {
+					"copy or encryption method"
+			})
 	default public void updateChangedFiles(Move moveMethod) {
 		ArrayList<Index> replaceList = new ArrayList<Index>();
 		MyDate.TimeAndDate backUpDate = MyDate.BackUpTime.getTimeFile(Main.getTimeFilePath());
@@ -67,6 +74,13 @@ public interface Update extends Collect, PathList{
 		}
 	}
 
+	@Comment(make = "Compares the relative paths from the path "
+			+ "list with those of the directory to be processed. "
+			+ "The paths that do not exist are missed. "
+			+ "The missing files are then processed.",
+			param = {
+					"copy or encryption method"
+			})
 	default public void moveMissingFiles(Move moveMethod) {
 		ArrayList<Integer> missingIndex = new ArrayList<Integer>();
 		main.Main.userInterface.showLoadingScreen("Missing files are determined...");

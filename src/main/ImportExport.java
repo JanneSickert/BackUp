@@ -7,6 +7,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * This class is only there to write strings in files 
+ * and to read strings from files.
+ * @author janne
+ *
+ */
 public class ImportExport {
 
 	private File f;

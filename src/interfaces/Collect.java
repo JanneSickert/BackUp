@@ -5,9 +5,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import test.Check_IO;
+import comment.Comment;
 
 public interface Collect {
 	
+	@Comment(make = "Collects all absolute paths of the files to be processed",
+			param = {
+					"the root folder",
+					"The method the stores the paths"
+			})
 	default public void collectFiles(File from, NewOrUpdate method) throws IOException {
 		File[] fileList = from.listFiles();
 		if (fileList != null) {
@@ -40,6 +46,7 @@ public interface Collect {
 		main.Storage.Collect.srcPath = new ArrayList<String>();
 	}
 	
+	@Comment(make = "write main.Storage.Collect.relPath to the path file")
 	default public void writeRelPath() {
 		File f = new File(main.Main.getPathListPath());
 		if (!(f.exists())) {

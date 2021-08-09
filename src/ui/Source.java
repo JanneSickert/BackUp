@@ -2,7 +2,6 @@ package ui;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import enums.SettingType;
 
 public class Source implements interfaces.UI{
