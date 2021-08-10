@@ -16,7 +16,9 @@ import interfaces.NewOrUpdate;
 import interfaces.Recovery;
 import interfaces.UI;
 import interfaces.Update;
+import interfaces.PathList;
 import interfaces.Collect;
+import comment.Comment;
 
 public class Main {
 
@@ -96,10 +98,56 @@ public class Main {
 			moveMethod.joinAll();
 			main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 		}
+		Main.NotFoundFiles notFoundFiles = new Main.NotFoundFiles();
+		notFoundFiles.updatePathList();
+		notFoundFiles.retry(moveMethod);
 		userInterface.ShowNotFoundFiles(errorFiles);
 		userInterface.finishMessage();
 	}
+	
+	
+	public static class NotFoundFiles implements Collect, PathList {
+		
+		private String[] errorList = new String[errorFiles.size()];
+		
+		@Comment(make = "Tries to process the files that were "
+				+ "previously used by another process, deleted or moved.")
+		void retry(Move moveMethod) {
+			
+		}
+		
+		@Comment(make = "Deletes the paths from the path list that "
+				+ "are contained in the ArrayList<File> errorFiles")
+		void updatePathList() {
+			ArrayList<String> pathList = getRecoveryPathList();
+			String[] nextPathList = new String[pathList.size() - errorFiles.size()];
+			int k = 0;
+			for (int i = 0; i < errorFiles.size(); i++) {
+				errorList[k] = getRelPath(errorFiles.get(i).getAbsolutePath(), getRootSourcePath());
+				k++;
+			}
+			k = 0;
+			for (int i = 0; i < pathList.size(); i++) {
+				if (!(existInErrorList(pathList.get(i)))) {
+					nextPathList[k] = pathList.get(i);
+					k++;
+				}
+			}
+			Storage.Collect.relPath = nextPathList;
+			writeRelPath(false);
+		}
+		
+		private boolean existInErrorList(String path) {
+			for (int i = 0; i < errorList.length; i++) {
+				if (path.equals(errorList[i])) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 
+	
 	private static void getLengthOfAllFiles() {
 		Collect collectLarge = new Collect() {
 		};

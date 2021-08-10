@@ -22,7 +22,7 @@ public interface NewBackUp extends Collect{
 		}
 		main.Storage.Collect.relPath = new String[main.Storage.Collect.srcPath.size()];
 		makeRelPath();
-		writeRelPath();
+		writeRelPath(true);
 		moveFiles(moveMethod);
 	}
 
