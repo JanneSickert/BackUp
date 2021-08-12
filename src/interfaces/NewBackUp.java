@@ -23,7 +23,7 @@ public interface NewBackUp extends Collect, Access {
 		}
 		main.Storage.Collect.relPath = new String[main.Storage.Collect.srcPath.size()];
 		makeRelPath();
-		writeRelPath(true);
+		writeRelPath(true, false);
 		moveFiles(moveMethod);
 	}
 

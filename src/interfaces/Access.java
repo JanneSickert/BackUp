@@ -12,7 +12,6 @@ public interface Access {
 		Path path = Paths.get(f.getAbsolutePath());
 		try {
 			if (f.length() > (long) Integer.MAX_VALUE) {
-				main.Main.addErrorFile(f);
 				return null;
 			} else {
 				return (Files.readAllBytes(path));

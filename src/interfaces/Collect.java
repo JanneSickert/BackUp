@@ -48,7 +48,7 @@ public interface Collect {
 	
 	@Comment(make = "write main.Storage.Collect.relPath to the path file",
 			param = {"append the paths if true"})
-	default public void writeRelPath(boolean append) {
+	default public void writeRelPath(boolean append, boolean updateMode) {
 		File f = new File(main.Main.getPathListPath());
 		if (!(f.exists())) {
 			try {
@@ -61,7 +61,9 @@ public interface Collect {
 				for (int i = 0; i < main.Storage.Collect.relPath.length - 1; i++) {
 					fwf.write(main.Storage.Collect.relPath[i] + "\n");
 				}
-				fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
+				if (!updateMode) {
+					fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
+				}
 				fwf.close();
 			} catch (IOException e) {
 				e.printStackTrace();

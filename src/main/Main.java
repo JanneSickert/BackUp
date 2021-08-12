@@ -122,6 +122,8 @@ public class Main {
 				+ "are contained in the ArrayList<File> errorFiles")
 		void updatePathList() {
 			ArrayList<String> pathList = getRecoveryPathList();
+			System.out.println("pathList.size() >> " + pathList.size());
+			System.out.println("errorFiles.size() >> " + errorFiles.size());
 			String[] nextPathList = new String[pathList.size() - errorFiles.size()];
 			int k = 0;
 			for (int i = 0; i < errorFiles.size(); i++) {
@@ -129,7 +131,7 @@ public class Main {
 				k++;
 			}
 			k = 0;
-			for (int i = 0; i < pathList.size(); i++) {
+			for (int i = 0; i < (pathList.size() - errorFiles.size()); i++) {
 				if (!(existInErrorList(pathList.get(i)))) {
 					nextPathList[k] = pathList.get(i);
 					k++;
@@ -137,7 +139,7 @@ public class Main {
 			}
 			Storage.Collect.relPath = nextPathList;
 			new File(getPathListPath()).delete();
-			writeRelPath(false);
+			writeRelPath(false, true);
 		}
 		
 		private boolean existInErrorList(String path) {
