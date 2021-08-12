@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import comment.Comment;
 import main.Main;
+import enums.SettingType;
 
-public interface NewBackUp extends Collect{
+public interface NewBackUp extends Collect, Access {
 	
 	@Comment(make = "First collects all paths of the folder, "
 			+ "then it converts them into relative paths and finally it "
@@ -29,8 +30,21 @@ public interface NewBackUp extends Collect{
 	@Comment(make = "This is the actual copying or encryption process",
 			param = "Can contain two methods: the one to encrypt or the one to copy.")
 	private void moveFiles(Move moveMethod) {
+		int k = 0;
 		for (int i = 0; i < main.Storage.Collect.srcPath.size(); i++) {
-			moveMethod.move(new File(main.Storage.Collect.srcPath.get(i)), new File(Main.getDataPath() + "/" + i));
+			File from = new File(main.Storage.Collect.srcPath.get(i));
+			if (Main.setting == SettingType.COPY_ONLY) {
+				moveMethod.move(from, new File(Main.getDataPath() + "/" + k), null);
+			} else {
+				byte[] bArr = makeFileToByteArr(from);
+				if (bArr == null) {
+					Main.addErrorFile(from);
+					k--;
+				} else {
+					moveMethod.move(from, new File(Main.getDataPath() + "/" + k), bArr);
+				}
+			}
+			k++;
 		}
 	}
 }

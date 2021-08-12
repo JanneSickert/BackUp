@@ -36,7 +36,7 @@ public class Gui implements UI {
 	private final String ERROR_MESSAGE = "The text field is empty or does not contain a valid file path.";
 	private final String[] ERROR_MESSAGE_PASSWORD = {"The password field is empty!", "The passwords are different!"};
 	private Timer timer;
-	@SuppressWarnings("unused")
+
 	private MyFrame loadingFrame = null;
 
 	class MyFrame extends JFrame {

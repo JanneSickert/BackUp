@@ -57,7 +57,7 @@ public interface Collect {
 				e.printStackTrace();
 			}
 			try {
-				FileWriter fwf = new FileWriter(f, true);
+				FileWriter fwf = new FileWriter(f, append);
 				for (int i = 0; i < main.Storage.Collect.relPath.length - 1; i++) {
 					fwf.write(main.Storage.Collect.relPath[i] + "\n");
 				}
