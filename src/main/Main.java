@@ -34,7 +34,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		System.out.println("@version 1.1");
-		userInterface = new ui.Gui();
+		userInterface = new ui.Source();
 		userInterface.showHead();
 		rootDestination = userInterface.getDestinationRootPath();
 		boolean settingFileExists = new File(getSettingTypeFilePath()).exists();

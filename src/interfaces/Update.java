@@ -74,7 +74,6 @@ public interface Update extends Collect, PathList, Access {
 			if (!(SettingType.COPY_ONLY == Main.setting)) {
 				byte[] fileInBytes = makeFileToByteArr(from);
 				if (fileInBytes == null) {
-					Main.addErrorFile(from);
 					continue;
 				} else {
 					dataPath.delete();
@@ -136,7 +135,6 @@ public interface Update extends Collect, PathList, Access {
 				} else {
 					byte[] fileInBytes = makeFileToByteArr(from);
 					if (fileInBytes == null) {
-						Main.addErrorFile(from);
 						to--;
 					} else {
 						moveMethod.move(from, new File(Main.getDataPath() + "/" + to), fileInBytes);

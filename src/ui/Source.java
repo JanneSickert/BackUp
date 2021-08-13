@@ -17,7 +17,7 @@ public class Source implements interfaces.UI{
 
 	@Override
 	public SettingType getSettings() {
-		return (SettingType.PASSWORD_AND_KEY_FILE);
+		return (SettingType.COPY_ONLY);
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class Source implements interfaces.UI{
 
 	@Override
 	public String getDestinationRootPath() {
-		String p = "C:/Users/janne/Desktop/test/backup";
+		String p = "C:/Users/janne/Desktop/test/des";
 		return p;
 	}
 

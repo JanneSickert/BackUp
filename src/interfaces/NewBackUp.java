@@ -38,7 +38,6 @@ public interface NewBackUp extends Collect, Access {
 			} else {
 				byte[] bArr = makeFileToByteArr(from);
 				if (bArr == null) {
-					Main.addErrorFile(from);
 					k--;
 				} else {
 					moveMethod.move(from, new File(Main.getDataPath() + "/" + k), bArr);

@@ -42,7 +42,6 @@ public interface Recovery extends PathList, Access {
 			} else {
 				byte[] bArr = makeFileToByteArr(a);
 				if (bArr == null) {
-					Main.addErrorFile(a);
 					continue;
 				} else {
 					moveMethod.move(a, b, bArr);
