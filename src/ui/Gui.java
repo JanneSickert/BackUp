@@ -18,6 +18,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JFileChooser;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 import enums.RecoverOrUpdate;
@@ -34,7 +36,7 @@ public class Gui implements UI {
 	private final int FIELD_LENGTH = 50;
 	private static long copyedLength = 0L;
 	private final String ERROR_MESSAGE = "The text field is empty or does not contain a valid file path.";
-	private final String[] ERROR_MESSAGE_PASSWORD = {"The password field is empty!", "The passwords are different!"};
+	private final String[] ERROR_MESSAGE_PASSWORD = { "The password field is empty!", "The passwords are different!" };
 	private Timer timer;
 
 	private MyFrame loadingFrame = null;
@@ -115,9 +117,9 @@ public class Gui implements UI {
 
 		private static final long serialVersionUID = -3384453354229902144L;
 		private String path;
-		
+
 		private class ChoosePath {
-			
+
 			private String cD;
 
 			/**
@@ -128,7 +130,7 @@ public class Gui implements UI {
 				chooser.showSaveDialog(null);
 				cD = chooser.getSelectedFile().getAbsolutePath();
 			}
-			
+
 			/**
 			 * 
 			 * @return The path which was selected in the constructor.
@@ -137,9 +139,9 @@ public class Gui implements UI {
 				return this.cD;
 			}
 		}
-		
+
 		private boolean validPath(String path) {
-			boolean[] b = {false, false};
+			boolean[] b = { false, false };
 			for (int i = 0; i < path.length(); i++) {
 				if (path.charAt(i) == ':') {
 					b[0] = true;
@@ -168,7 +170,7 @@ public class Gui implements UI {
 				public void actionPerformed(ActionEvent e) {
 					path = jtf.getText();
 					if (!(validPath(path))) {
-						JOptionPane.showMessageDialog(null, ERROR_MESSAGE, "ERROR",JOptionPane.OK_CANCEL_OPTION);
+						JOptionPane.showMessageDialog(null, ERROR_MESSAGE, "ERROR", JOptionPane.OK_CANCEL_OPTION);
 					} else {
 						messageNotSent = false;
 					}
@@ -195,15 +197,15 @@ public class Gui implements UI {
 			return path;
 		}
 	}
-	
-	class KeyHandler implements KeyListener{
+
+	class KeyHandler implements KeyListener {
 
 		private ActionListener al;
-		
+
 		KeyHandler(ActionListener al) {
 			this.al = al;
 		}
-		
+
 		@Override
 		public void keyPressed(KeyEvent arg0) {
 			switch (arg0.getKeyCode()) {
@@ -254,12 +256,14 @@ public class Gui implements UI {
 					password = new String(jpf.getPassword());
 					confirm_password = new String(jpf_confirm.getPassword());
 					if (password.equals("") || confirm_password.equals("")) {
-						JOptionPane.showMessageDialog(null, ERROR_MESSAGE_PASSWORD[0], "ERROR",JOptionPane.OK_CANCEL_OPTION);
+						JOptionPane.showMessageDialog(null, ERROR_MESSAGE_PASSWORD[0], "ERROR",
+								JOptionPane.OK_CANCEL_OPTION);
 					} else {
 						if (password.equals(confirm_password)) {
 							messageNotSent = false;
 						} else {
-							JOptionPane.showMessageDialog(null, ERROR_MESSAGE_PASSWORD[1], "ERROR",JOptionPane.OK_CANCEL_OPTION);
+							JOptionPane.showMessageDialog(null, ERROR_MESSAGE_PASSWORD[1], "ERROR",
+									JOptionPane.OK_CANCEL_OPTION);
 						}
 					}
 				}
@@ -452,17 +456,14 @@ public class Gui implements UI {
 			g2d.setColor(new Color(0, 155, 0));
 			g2d.drawString(message, 10, 70);
 			g2d.setColor(new Color(0, 0, 155));
-			g2d.fillOval(
-					((int) Math.round(r * Math.cos((double) (ballIndex / Math.PI)) + X + r)),
-					((int) Math.round(r * Math.sin((double) (ballIndex / Math.PI)) + Y + r)),
-					20,
-					20);
+			g2d.fillOval(((int) Math.round(r * Math.cos((double) (ballIndex / Math.PI)) + X + r)),
+					((int) Math.round(r * Math.sin((double) (ballIndex / Math.PI)) + Y + r)), 20, 20);
 		}
-		
+
 		LoadingPannel(String message) {
 			this.message = message;
 		}
-		
+
 		public void nextBallIndex() {
 			ballIndex++;
 			if (ballIndex == Integer.MAX_VALUE) {
@@ -475,12 +476,13 @@ public class Gui implements UI {
 	public void showLoadingScreen(String message) {
 		LoadingPannel pannel = new LoadingPannel(message);
 		loadingFrame = new MyFrame(pannel);
-		timer = new Timer(120, new ActionListener() { 
-		     public void actionPerformed(ActionEvent e) { 
-		    	  pannel.nextBallIndex();
-		    	  pannel.revalidate();
-		    	  pannel.repaint();
-		}});
+		timer = new Timer(120, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pannel.nextBallIndex();
+				pannel.revalidate();
+				pannel.repaint();
+			}
+		});
 		timer.start();
 		loadingFrame.setVisible(true);
 	}
@@ -492,9 +494,38 @@ public class Gui implements UI {
 	}
 
 	@Override
-	public void ShowNotFoundFiles(ArrayList<File> list) {
+	public void showNotFoundFiles(ArrayList<File> list) {
+		ArrayList<String> string_list = new ArrayList<String>();
 		for (File f : list) {
-			System.out.println("missing file: " + f.getAbsolutePath());
+			string_list.add(f.getAbsolutePath());
+		}
+		new MyFrame(new MyMissingPannel(string_list));
+	}
+
+	static class MyMissingPannel extends JPanel {
+
+		private static final long serialVersionUID = 3391336325888199776L;
+
+		public MyMissingPannel(ArrayList<String> list) {
+			super.setLayout(new GridLayout(2, 1));
+			JTextArea output = new JTextArea();
+			output.setLocation(20, 100);
+			output.setSize(660, 600);
+			String text = "";
+			for (int i = 0; i < (list.size() - 1); i++) {
+				text = text + list.get(i) + "\n";
+			}
+			text = text + list.get(list.size() - 1);
+			output.setText(text);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			scroll.setViewportView(output);
+			final String content = "<html><b><font size=\"30\">These files could not be processed.</font></b></html>";
+			JLabel label = new JLabel(content, JLabel.CENTER);
+			label.setSize(700, 100);
+			add(label);
+			add(scroll);
 		}
 	}
 }

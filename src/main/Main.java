@@ -33,8 +33,8 @@ public class Main {
 	public static SettingType setting = null;
 
 	public static void main(String[] args) {
-		System.out.println("@version 1.1");
-		userInterface = new ui.Source();
+		System.out.println("@version 1.3");
+		userInterface = new ui.Gui();
 		userInterface.showHead();
 		rootDestination = userInterface.getDestinationRootPath();
 		boolean settingFileExists = new File(getSettingTypeFilePath()).exists();
@@ -100,7 +100,9 @@ public class Main {
 		Main.NotFoundFiles notFoundFiles = new Main.NotFoundFiles();
 		notFoundFiles.updatePathList();
 		notFoundFiles.retry(moveMethod);
-		userInterface.ShowNotFoundFiles(errorFiles);
+		if (errorFiles.size() != 0) {
+			userInterface.showNotFoundFiles(errorFiles);
+		}
 		userInterface.finishMessage();
 	}
 

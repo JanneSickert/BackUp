@@ -81,7 +81,7 @@ public class Source implements interfaces.UI{
 	}
 	
 	@Override
-	public void ShowNotFoundFiles(ArrayList<File> list) {
+	public void showNotFoundFiles(ArrayList<File> list) {
 		for (File f : list) {
 			p("missing file: " + f.getAbsolutePath());
 		}
