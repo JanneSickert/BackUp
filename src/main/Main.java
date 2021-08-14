@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import enums.SettingType;
@@ -16,7 +14,9 @@ import interfaces.NewOrUpdate;
 import interfaces.Recovery;
 import interfaces.UI;
 import interfaces.Update;
+import interfaces.PathList;
 import interfaces.Collect;
+import comment.Comment;
 
 public class Main {
 
@@ -30,13 +30,13 @@ public class Main {
 	public static long lengthOfAllFiles = 0L;
 	static Calculate calculateMethod;
 	protected static ArrayList<File> errorFiles = new ArrayList<File>();
+	public static SettingType setting = null;
 
 	public static void main(String[] args) {
-		System.out.println("@version 1.1");
+		System.out.println("@version 1.3");
 		userInterface = new ui.Gui();
 		userInterface.showHead();
 		rootDestination = userInterface.getDestinationRootPath();
-		SettingType setting = null;
 		boolean settingFileExists = new File(getSettingTypeFilePath()).exists();
 		ImportExport ix_setting = new ImportExport(new File(getSettingTypeFilePath()));
 		ImportExport ix_source = new ImportExport(new File(getSourceFilePath()));
@@ -96,10 +96,65 @@ public class Main {
 			moveMethod.joinAll();
 			main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 		}
-		userInterface.ShowNotFoundFiles(errorFiles);
+		moveMethod.joinAll();
+		Main.NotFoundFiles notFoundFiles = new Main.NotFoundFiles();
+		notFoundFiles.updatePathList();
+		notFoundFiles.retry(moveMethod);
+		if (errorFiles.size() != 0) {
+			userInterface.showNotFoundFiles(errorFiles);
+		}
 		userInterface.finishMessage();
 	}
 
+	public static synchronized void addErrorFile(File f) {
+		errorFiles.add(f);
+	}
+	
+	public static class NotFoundFiles implements Collect, PathList {
+		
+		private String[] errorList = new String[errorFiles.size()];
+		
+		@Comment(make = "Tries to process the files that were "
+				+ "previously used by another process, deleted or moved.")
+		void retry(Move moveMethod) {
+			
+		}
+		
+		@Comment(make = "Deletes the paths from the path list that "
+				+ "are contained in the ArrayList<File> errorFiles")
+		void updatePathList() {
+			ArrayList<String> pathList = getRecoveryPathList();
+			System.out.println("pathList.size() >> " + pathList.size());
+			System.out.println("errorFiles.size() >> " + errorFiles.size());
+			String[] nextPathList = new String[pathList.size() - errorFiles.size()];
+			int k = 0;
+			for (int i = 0; i < errorFiles.size(); i++) {
+				errorList[k] = getRelPath(errorFiles.get(i).getAbsolutePath(), getRootSourcePath());
+				k++;
+			}
+			k = 0;
+			for (int i = 0; i < (pathList.size() - errorFiles.size()); i++) {
+				if (!(existInErrorList(pathList.get(i)))) {
+					nextPathList[k] = pathList.get(i);
+					k++;
+				}
+			}
+			Storage.Collect.relPath = nextPathList;
+			new File(getPathListPath()).delete();
+			writeRelPath(false, true);
+		}
+		
+		private boolean existInErrorList(String path) {
+			for (int i = 0; i < errorList.length; i++) {
+				if (path.equals(errorList[i])) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	
 	private static void getLengthOfAllFiles() {
 		Collect collectLarge = new Collect() {
 		};
@@ -121,28 +176,22 @@ public class Main {
 		private File to;
 		private byte[] key;
 		private Calculate cryCal;
+		private byte[] fileInBytes;
 
-		CryptoThread(File from, File to, byte[] key, Calculate cryCal) {
+		CryptoThread(File from, File to, byte[] key, Calculate cryCal, byte[] fileInBytes) {
 			this.from = from;
 			this.to = to;
 			this.key = key;
 			this.cryCal = cryCal;
+			this.fileInBytes = fileInBytes;
 		}
 
 		@Override
 		public void run() {
 			print(from, to);
-			byte[] arr = makeFileToByteArr(from);
-			if (arr == null) {
-				addErrorFile(from);
-			} else {
-				byte[] cry = encryptOrDecrypt(arr, key, cryCal);
-				writeFileFromBytes(to.getAbsolutePath(), cry);
-			}
-		}
-		
-		public static synchronized void addErrorFile(File f) {
-			errorFiles.add(f);
+			byte[] arr = fileInBytes;
+			byte[] cry = encryptOrDecrypt(arr, key, cryCal);
+			writeFileFromBytes(to.getAbsolutePath(), cry);
 		}
 
 		private void print(File a, File b) {
@@ -159,16 +208,6 @@ public class Main {
 				}
 			}
 			return fileInBytes;
-		}
-
-		private byte[] makeFileToByteArr(File f) {
-			Path path = Paths.get(f.getAbsolutePath());
-			try {
-				return (Files.readAllBytes(path));
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
 		}
 
 		private void writeFileFromBytes(String path, byte[] fileInBytes) {
@@ -201,9 +240,9 @@ public class Main {
 		}
 
 		@Override
-		public void move(File from, File to) {
+		public void move(File from, File to, byte[] fileInBytes) {
 			if (thread[threadIndex] == null) {
-				thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod);
+				thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod, fileInBytes);
 				thread[threadIndex].start();
 				threadIndex++;
 				if (threadIndex == NR_OF_THREADS) {
@@ -214,7 +253,7 @@ public class Main {
 				do {
 					if (!(thread[threadIndex].isAlive())) {
 						b = false;
-						thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod);
+						thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod, fileInBytes);
 						thread[threadIndex].start();
 					}
 					threadIndex++;
@@ -303,7 +342,7 @@ public class Main {
 
 	public static Move copy = new Move() {
 		@Override
-		public void move(File from, File to) {
+		public void move(File from, File to, byte[] fileInBytes) {
 			print(from, to);
 			try {
 				Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);

@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import main.Main;
 import main.MyDate;
 import comment.Comment;
+import enums.SettingType;
 
-public interface Update extends Collect, PathList{
+public interface Update extends Collect, PathList, Access {
 
 	default public void update(Move moveMethod) {
 		initVars();
@@ -54,7 +55,7 @@ public interface Update extends Collect, PathList{
 			try {
 				attrs = Files.readAttributes(path, BasicFileAttributes.class);
 			} catch (IOException e) {
-				main.Main.CryptoThread.addErrorFile(path.toFile());
+				main.Main.addErrorFile(path.toFile());
 				continue;
 			}
 			FileTime time = attrs.lastModifiedTime();
@@ -69,8 +70,19 @@ public interface Update extends Collect, PathList{
 		}
 		for (int i = 0; i < replaceList.size(); i++) {
 			File dataPath = new File(Main.getDataPath() + "/" + replaceList.get(i).des);
-			dataPath.delete();
-			moveMethod.move(new File(main.Storage.Update.absolutSourcePath.get(replaceList.get(i).src)), new File(Main.getDataPath() + "/" + replaceList.get(i).des));
+			File from = new File(main.Storage.Update.absolutSourcePath.get(replaceList.get(i).src));
+			if (!(SettingType.COPY_ONLY == Main.setting)) {
+				byte[] fileInBytes = makeFileToByteArr(from);
+				if (fileInBytes == null) {
+					continue;
+				} else {
+					dataPath.delete();
+					moveMethod.move(from, new File(Main.getDataPath() + "/" + replaceList.get(i).des), fileInBytes);
+				}
+			} else {
+				dataPath.delete();
+				moveMethod.move(from, new File(Main.getDataPath() + "/" + replaceList.get(i).des), null);
+			}
 		}
 	}
 
@@ -113,11 +125,21 @@ public interface Update extends Collect, PathList{
 		if (main.Storage.Collect.srcPath.size() != 0) {
 			main.Storage.Collect.relPath = new String[main.Storage.Collect.srcPath.size()];
 			makeRelPath();
-			writeRelPath();
+			writeRelPath(true, false);
 			int to = main.Storage.Update.relDestinationPath.size();
 			main.Main.userInterface.closeLoadingScreen();
 			for (int i = 0; i < missingIndex.size(); i++) {
-				moveMethod.move(new File(main.Storage.Update.absolutSourcePath.get((int) missingIndex.get(i))), new File(Main.getDataPath() + "/" + to));
+				File from = new File(main.Storage.Update.absolutSourcePath.get((int) missingIndex.get(i)));
+				if (SettingType.COPY_ONLY == Main.setting) {
+					moveMethod.move(from, new File(Main.getDataPath() + "/" + to), null);
+				} else {
+					byte[] fileInBytes = makeFileToByteArr(from);
+					if (fileInBytes == null) {
+						to--;
+					} else {
+						moveMethod.move(from, new File(Main.getDataPath() + "/" + to), fileInBytes);
+					}
+				}
 				to++;
 			}
 		} else {

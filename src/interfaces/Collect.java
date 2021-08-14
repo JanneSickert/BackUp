@@ -46,8 +46,9 @@ public interface Collect {
 		main.Storage.Collect.srcPath = new ArrayList<String>();
 	}
 	
-	@Comment(make = "write main.Storage.Collect.relPath to the path file")
-	default public void writeRelPath() {
+	@Comment(make = "write main.Storage.Collect.relPath to the path file",
+			param = {"append the paths if true"})
+	default public void writeRelPath(boolean append, boolean updateMode) {
 		File f = new File(main.Main.getPathListPath());
 		if (!(f.exists())) {
 			try {
@@ -56,18 +57,20 @@ public interface Collect {
 				e.printStackTrace();
 			}
 			try {
-				FileWriter fwf = new FileWriter(f, true);
+				FileWriter fwf = new FileWriter(f, append);
 				for (int i = 0; i < main.Storage.Collect.relPath.length - 1; i++) {
 					fwf.write(main.Storage.Collect.relPath[i] + "\n");
 				}
-				fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
+				if (!updateMode) {
+					fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
+				}
 				fwf.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				FileWriter fwf = new FileWriter(f, true);
+				FileWriter fwf = new FileWriter(f, append);
 				fwf.write("\n");
 				for (int i = 0; i < main.Storage.Collect.relPath.length - 1; i++) {
 					fwf.write(main.Storage.Collect.relPath[i] + "\n");

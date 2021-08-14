@@ -4,7 +4,7 @@ import java.io.File;
 
 public interface Move {
 
-	public void move(File from, File to);
+	public void move(File from, File to, byte[] fileInBytes);
 	
 	public void joinAll();
 	

@@ -2,11 +2,11 @@ package interfaces;
 
 import java.io.File;
 import java.util.ArrayList;
-
+import enums.SettingType;
 import main.Main;
 import test.Check_IO;
 
-public interface Recovery extends PathList{
+public interface Recovery extends PathList, Access {
 
 	@Check_IO(rightOutput = "C:/aa/bb", input = { "C:/aa/bb/text.txt" })
 	default public String getFolderPath(String path) {
@@ -37,7 +37,16 @@ public interface Recovery extends PathList{
 		for (int i = 0; i < recoveryOutputPaths.size(); i++) {
 			File a = new File(backup + i);
 			File b = new File(recoveryOutputPaths.get(i));
-			moveMethod.move(a, b);
+			if (SettingType.COPY_ONLY == Main.setting) {
+				moveMethod.move(a, b, null);
+			} else {
+				byte[] bArr = makeFileToByteArr(a);
+				if (bArr == null) {
+					continue;
+				} else {
+					moveMethod.move(a, b, bArr);
+				}
+			}
 		}
 	}
 

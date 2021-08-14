@@ -1,11 +1,35 @@
 package test;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import ui.Gui.MoveGui;
+import ui.Gui;
 
 public class Test {
 
 	public static void main(String[] args) {
+		// testMoveGui();
+		// testLoadingScreen();
+		testErrorFiles();
+	}
+	
+	private static void testErrorFiles() {
+		ArrayList<File> list = new ArrayList<File>();
+		for (int i = 0; i < 50; i++) {
+			list.add(new File("C:/files/" + i));
+		}
+		new Gui().showNotFoundFiles(list);
+	}
+	
+	@SuppressWarnings("unused")
+	private static void testLoadingScreen() {
+        ui.Gui gui = new ui.Gui();
+        gui.showLoadingScreen("test message............");
+	}
+	
+	@SuppressWarnings("unused")
+	private static void testMoveGui() {
         AtTest<MoveGui> c;
         c = new Test.AtTest<>() {
         	@Override
@@ -15,16 +39,14 @@ public class Test {
         	}
         };
         c.doTest(MoveGui.class);
-        ui.Gui gui = new ui.Gui();
-        gui.showLoadingScreen("test message............");
 	}
 
 	public static abstract class AtTest<T>{
 
-		public abstract void eql();
-
 		String rightOutput;
 		String[] input;
+
+		public abstract void eql();
 
 		public void doTest(Class<T> Typ) {
 			Method[] methoden = Typ.getDeclaredMethods();
