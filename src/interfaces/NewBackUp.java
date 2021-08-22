@@ -22,6 +22,7 @@ public interface NewBackUp extends Collect, Access {
 			e.printStackTrace();
 		}
 		main.Storage.Collect.relPath = new String[main.Storage.Collect.srcPath.size()];
+		main.Storage.Collect.relEmptyFolderPath = new String[main.Storage.Collect.absolutEmptyFolderSourcePath.size()];
 		makeRelPath();
 		writeRelPath(true, false);
 		moveFiles(moveMethod);

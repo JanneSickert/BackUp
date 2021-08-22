@@ -58,6 +58,12 @@ public interface Recovery extends PathList, Access {
 		return res;
 	}
 	
+	default public void createEmptyFolderStructur(ArrayList<String> list) {
+		for (String s : addRoot(list)) {
+			new File(s).mkdirs();
+		}
+	}
+
 	default public void start(Move moveMethod) {
 		main.Main.userInterface.showLoadingScreen("Determines data to be restored...");
 		ArrayList<String> rpl = getRecoveryPathList();
@@ -65,6 +71,7 @@ public interface Recovery extends PathList, Access {
 		main.Main.userInterface.closeLoadingScreen();
 		main.Main.userInterface.showLoadingScreen("Creates folder structure...");
 		createFolderStructur(rpl);
+		createEmptyFolderStructur(getEmptyFolderPathList());
 		main.Main.userInterface.closeLoadingScreen();
 		moveAllFiles(rpl, moveMethod);
 	}

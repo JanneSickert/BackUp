@@ -17,11 +17,15 @@ public interface Collect {
 	default public void collectFiles(File from, NewOrUpdate method) throws IOException {
 		File[] fileList = from.listFiles();
 		if (fileList != null) {
-			for (File file : fileList) {
-				if (file.isDirectory()) {
-					collectFiles(file, method);
-				} else {
-					method.doWithFile(file);
+			if (fileList.length == 0) {
+				method.doWithEmptyFolder(from);
+			} else {
+				for (File file : fileList) {
+					if (file.isDirectory()) {
+						collectFiles(file, method);
+					} else {
+						method.doWithFile(file);
+					}
 				}
 			}
 		}
@@ -44,20 +48,23 @@ public interface Collect {
 	
 	default public void initVars() {
 		main.Storage.Collect.srcPath = new ArrayList<String>();
+		main.Storage.Collect.absolutEmptyFolderSourcePath = new ArrayList<String>();
 	}
 	
 	@Comment(make = "write main.Storage.Collect.relPath to the path file",
-			param = {"append the paths if true"})
+			param = {"append the paths if true", ""})
 	default public void writeRelPath(boolean append, boolean updateMode) {
 		File f = new File(main.Main.getPathListPath());
+		File emptyFolder = new File(main.Main.getEmptyFolderPathList());
 		if (!(f.exists())) {
 			try {
 				f.createNewFile();
+				emptyFolder.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			try {
-				FileWriter fwf = new FileWriter(f, append);
+				FileWriter fwf = new FileWriter(f, append);// for files
 				for (int i = 0; i < main.Storage.Collect.relPath.length - 1; i++) {
 					fwf.write(main.Storage.Collect.relPath[i] + "\n");
 				}
@@ -65,6 +72,17 @@ public interface Collect {
 					fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
 				}
 				fwf.close();
+				if (main.Storage.Collect.relEmptyFolderPath != null) {
+					int len_ef = main.Storage.Collect.relEmptyFolderPath.length;
+					if (len_ef > 0) {
+						FileWriter efw = new FileWriter(emptyFolder, append);// for empty folders
+						for (int i = 0; i < main.Storage.Collect.relEmptyFolderPath.length - 1; i++) {
+							efw.write(main.Storage.Collect.relEmptyFolderPath[i] + "\n");
+						}
+						efw.write(main.Storage.Collect.relEmptyFolderPath[len_ef - 1]);
+						efw.close();
+					}
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -84,8 +102,11 @@ public interface Collect {
 	}
 	
 	default public void makeRelPath() {
-		for (int i = 0; i < main.Storage.Collect.relPath.length; i++) {
+		for (int i = 0; i < main.Storage.Collect.relPath.length; i++) {// for files
 			main.Storage.Collect.relPath[i] = getRelPath(main.Storage.Collect.srcPath.get(i), main.Main.getRootSourcePath());
+		}
+		for (int i = 0; i < main.Storage.Collect.relEmptyFolderPath.length; i++) {// for folders
+			main.Storage.Collect.relEmptyFolderPath[i] = getRelPath(main.Storage.Collect.absolutEmptyFolderSourcePath.get(i), main.Main.getRootSourcePath());
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package interfaces;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,12 +19,18 @@ public interface Update extends Collect, PathList, Access {
 		initVars();
 		initUpdateVars();
 		moveMissingFiles(moveMethod);
+		try {
+			moveMissingFolders();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		updateChangedFiles(moveMethod);
 	}
 	
 	default public void initUpdateVars() {
 		main.Storage.Update.absolutSourcePath = new ArrayList<String>();
 		main.Storage.Update.relDestinationPath = new ArrayList<String>();
+		main.Storage.Update.absolutEmptyFolderSourcePath = new ArrayList<String>();
 	}
 	
 	default public int findIndexByRelPath(String path) {
@@ -145,5 +152,35 @@ public interface Update extends Collect, PathList, Access {
 		} else {
 			main.Main.userInterface.closeLoadingScreen();
 		}
+	}
+	
+	@Comment(make = "Append the missing empty folders relative paths to the empty folders path list file.")
+	default public void moveMissingFolders() throws IOException {
+		ArrayList<String> list = getEmptyFolderPathList();
+		String[] source = new String[main.Storage.Update.absolutEmptyFolderSourcePath.size()];
+		for (int i = 0; i < main.Storage.Update.absolutEmptyFolderSourcePath.size(); i++) {
+			source[i] = getRelPath(main.Storage.Update.absolutEmptyFolderSourcePath.get(i), Main.getRootSourcePath());
+		}
+		ArrayList<Integer> indexList = new ArrayList<Integer>();
+		for (int i = 0; i < source.length; i++) {
+			boolean found = false;
+			for (int k = 0; k < list.size(); k++) {
+				if (source[i].equals(list.get(k))) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				indexList.add((Integer) i);
+			}
+		}
+		File emptyFolder = new File(main.Main.getEmptyFolderPathList());
+		FileWriter efw = new FileWriter(emptyFolder, true);// for empty folders
+		efw.write("\n");
+		for (int i = 0; i < main.Storage.Collect.relEmptyFolderPath.length - 1; i++) {
+			efw.write(main.Storage.Collect.relEmptyFolderPath[i] + "\n");
+		}
+		efw.write(main.Storage.Collect.relEmptyFolderPath[main.Storage.Collect.relEmptyFolderPath.length - 1]);
+		efw.close();
 	}
 }
