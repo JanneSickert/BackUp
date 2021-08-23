@@ -33,7 +33,7 @@ public class Main {
 	public static SettingType setting = null;
 
 	public static void main(String[] args) {
-		System.out.println("@version 1.3");
+		System.out.println("@version 1.4");
 		userInterface = new ui.Gui();
 		userInterface.showHead();
 		rootDestination = userInterface.getDestinationRootPath();
@@ -114,7 +114,7 @@ public class Main {
 		
 		private String[] errorList = new String[errorFiles.size()];
 		
-		@Comment(make = "Tries to process the files that were "
+		@Comment(make = "Try to process the files that were "
 				+ "previously used by another process, deleted or moved.")
 		void retry(Move moveMethod) {
 			
@@ -163,6 +163,11 @@ public class Main {
 				@Override
 				public void doWithFile(File f) {
 					lengthOfAllFiles = lengthOfAllFiles + f.length();
+				}
+
+				@Override
+				public void doWithEmptyFolder(File f) {
+					// Folders have no size.
 				}
 			});
 		} catch (IOException e) {
@@ -327,6 +332,10 @@ public class Main {
 	private static String getSettingTypeFilePath() {
 		return (getSettingsPath() + "/settingType.txt");
 	}
+	
+	public static String getEmptyFolderPathList() {
+		return (getSettingsPath() + "/EmptyFolderPathList.txt");
+	}
 
 	public static String getKeyFilePath() {
 		return keyFilePath;
@@ -362,12 +371,22 @@ public class Main {
 		public void doWithFile(File f) {
 			main.Storage.Update.absolutSourcePath.add(f.getAbsolutePath());
 		}
+
+		@Override
+		public void doWithEmptyFolder(File f) {
+			main.Storage.Update.absolutEmptyFolderSourcePath.add(f.getAbsolutePath());
+		}
 	};
 
 	public static NewOrUpdate newBackUp = new NewOrUpdate() {
 		@Override
 		public void doWithFile(File f) {
 			main.Storage.Collect.srcPath.add(f.getAbsolutePath());
+		}
+
+		@Override
+		public void doWithEmptyFolder(File f) {
+			main.Storage.Collect.absolutEmptyFolderSourcePath.add(f.getAbsolutePath());
 		}
 	};
 

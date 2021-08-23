@@ -8,11 +8,11 @@ import java.util.ArrayList;
 
 public interface PathList {
 
-	default public ArrayList<String> getRecoveryPathList() {
+	default public ArrayList<String> getList(String path) {
 		ArrayList<String> list = new ArrayList<String>();
 		FileReader fr;
 		try {
-			fr = new FileReader(main.Main.getPathListPath());
+			fr = new FileReader(path);
 			BufferedReader br = new BufferedReader(fr);
 			String line = "";
 			while ((line = br.readLine()) != null) {
@@ -27,5 +27,13 @@ public interface PathList {
 			System.exit(1);
 		}
 		return list;
+	}
+	
+	default public ArrayList<String> getRecoveryPathList() {
+		return (getList(main.Main.getPathListPath()));
+	}
+	
+	default public ArrayList<String> getEmptyFolderPathList() {
+		return (getList(main.Main.getEmptyFolderPathList()));
 	}
 }

@@ -1,6 +1,7 @@
 package test;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import ui.Gui.MoveGui;
@@ -11,9 +12,31 @@ public class Test {
 	public static void main(String[] args) {
 		// testMoveGui();
 		// testLoadingScreen();
-		testErrorFiles();
+		// testErrorFiles();
+		testCollectPath();
 	}
 	
+	private static void testCollectPath() {
+		try {
+			new interfaces.Collect() {
+			}.collectFiles(
+					new File("C:/Users/janne/Desktop/test/src"),
+					new interfaces.NewOrUpdate() {
+						@Override
+						public void doWithFile(File f) {
+							System.out.println("File:" + f.getAbsolutePath());
+						}
+						@Override
+						public void doWithEmptyFolder(File f) {
+							System.out.println("Folder:" + f.getAbsolutePath());
+						}
+					});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unused")
 	private static void testErrorFiles() {
 		ArrayList<File> list = new ArrayList<File>();
 		for (int i = 0; i < 50; i++) {
@@ -21,13 +44,13 @@ public class Test {
 		}
 		new Gui().showNotFoundFiles(list);
 	}
-	
+
 	@SuppressWarnings("unused")
 	private static void testLoadingScreen() {
         ui.Gui gui = new ui.Gui();
         gui.showLoadingScreen("test message............");
 	}
-	
+
 	@SuppressWarnings("unused")
 	private static void testMoveGui() {
         AtTest<MoveGui> c;
