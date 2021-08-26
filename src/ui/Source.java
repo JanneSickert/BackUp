@@ -13,6 +13,7 @@ public class Source implements interfaces.UI{
 	@Override
 	public void showHead() {
 		p("BackUp program");
+		p("Is in developing!");
 	}
 
 	@Override
@@ -38,7 +39,7 @@ public class Source implements interfaces.UI{
 	 */
 	@Override
 	public boolean updateOrRecover() {
-		int nr = 0;
+		int nr = 1;// type here!
 		return (nr == 1);
 	}
 

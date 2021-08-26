@@ -88,13 +88,15 @@ public interface Collect {
 			}
 		} else {
 			try {
-				FileWriter fwf = new FileWriter(f, append);
-				fwf.write("\n");
-				for (int i = 0; i < main.Storage.Collect.relPath.length - 1; i++) {
-					fwf.write(main.Storage.Collect.relPath[i] + "\n");
+				if (main.Storage.Collect.relPath.length != 0) {
+					FileWriter fwf = new FileWriter(f, append);
+					fwf.write("\n");
+					for (int i = 0; i < main.Storage.Collect.relPath.length - 1; i++) {
+						fwf.write(main.Storage.Collect.relPath[i] + "\n");
+					}
+					fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
+					fwf.close();
 				}
-				fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
-				fwf.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -104,9 +106,6 @@ public interface Collect {
 	default public void makeRelPath() {
 		for (int i = 0; i < main.Storage.Collect.relPath.length; i++) {// for files
 			main.Storage.Collect.relPath[i] = getRelPath(main.Storage.Collect.srcPath.get(i), main.Main.getRootSourcePath());
-		}
-		for (int i = 0; i < main.Storage.Collect.relEmptyFolderPath.length; i++) {// for folders
-			main.Storage.Collect.relEmptyFolderPath[i] = getRelPath(main.Storage.Collect.absolutEmptyFolderSourcePath.get(i), main.Main.getRootSourcePath());
 		}
 	}
 }

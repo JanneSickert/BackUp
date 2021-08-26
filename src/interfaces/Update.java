@@ -174,13 +174,25 @@ public interface Update extends Collect, PathList, Access {
 				indexList.add((Integer) i);
 			}
 		}
-		File emptyFolder = new File(main.Main.getEmptyFolderPathList());
-		FileWriter efw = new FileWriter(emptyFolder, true);// for empty folders
-		efw.write("\n");
-		for (int i = 0; i < main.Storage.Collect.relEmptyFolderPath.length - 1; i++) {
-			efw.write(main.Storage.Collect.relEmptyFolderPath[i] + "\n");
+		main.Storage.Collect.relEmptyFolderPath = new String[indexList.size() + list.size()];
+		int index = 0;
+		for (int i = 0; i < indexList.size(); i++) {
+			main.Storage.Collect.relEmptyFolderPath[index] = source[indexList.get(index)];
+			index++;
 		}
-		efw.write(main.Storage.Collect.relEmptyFolderPath[main.Storage.Collect.relEmptyFolderPath.length - 1]);
-		efw.close();
+		for (String list_value : list) {
+			main.Storage.Collect.relEmptyFolderPath[index] = list_value;
+			index++;
+		}
+		if (main.Storage.Collect.relEmptyFolderPath.length != 0) {
+			File emptyFolder = new File(main.Main.getEmptyFolderPathList());
+			FileWriter efw = new FileWriter(emptyFolder, false);// for empty folders
+			efw.write("\n");
+			for (int i = 0; i < main.Storage.Collect.relEmptyFolderPath.length - 1; i++) {
+				efw.write(main.Storage.Collect.relEmptyFolderPath[i] + "\n");
+			}
+			efw.write(main.Storage.Collect.relEmptyFolderPath[main.Storage.Collect.relEmptyFolderPath.length - 1]);
+			efw.close();
+		}
 	}
 }

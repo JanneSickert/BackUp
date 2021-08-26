@@ -34,7 +34,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		System.out.println("@version 1.4");
-		userInterface = new ui.Gui();
+		userInterface = new ui.Source();
 		userInterface.showHead();
 		rootDestination = userInterface.getDestinationRootPath();
 		boolean settingFileExists = new File(getSettingTypeFilePath()).exists();
@@ -124,8 +124,6 @@ public class Main {
 				+ "are contained in the ArrayList<File> errorFiles")
 		void updatePathList() {
 			ArrayList<String> pathList = getRecoveryPathList();
-			System.out.println("pathList.size() >> " + pathList.size());
-			System.out.println("errorFiles.size() >> " + errorFiles.size());
 			String[] nextPathList = new String[pathList.size() - errorFiles.size()];
 			int k = 0;
 			for (int i = 0; i < errorFiles.size(); i++) {
