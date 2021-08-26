@@ -73,6 +73,7 @@ public class Main {
 			key = generateKey(setting);
 			moveMethod = getCryptMove();
 		}
+		boolean newBackUp = false;
 		if (new File(getPathListPath()).exists()) {
 			boolean update = userInterface.updateOrRecover();
 			if (update) {
@@ -95,13 +96,16 @@ public class Main {
 			}.newBackUp(moveMethod);
 			moveMethod.joinAll();
 			main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
+			newBackUp = true;
 		}
 		moveMethod.joinAll();
-		Main.NotFoundFiles notFoundFiles = new Main.NotFoundFiles();
-		notFoundFiles.updatePathList();
-		notFoundFiles.retry(moveMethod);
-		if (errorFiles.size() != 0) {
-			userInterface.showNotFoundFiles(errorFiles);
+		if (!newBackUp) {
+			Main.NotFoundFiles notFoundFiles = new Main.NotFoundFiles();
+			notFoundFiles.updatePathList();
+			notFoundFiles.retry(moveMethod);
+			if (errorFiles.size() != 0) {
+				userInterface.showNotFoundFiles(errorFiles);
+			}
 		}
 		userInterface.finishMessage();
 	}

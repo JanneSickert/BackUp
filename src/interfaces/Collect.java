@@ -103,9 +103,15 @@ public interface Collect {
 		}
 	}
 	
-	default public void makeRelPath() {
+	@Comment(param = {"true if this is a new backup."})
+	default public void makeRelPath(boolean newBackUp) {
 		for (int i = 0; i < main.Storage.Collect.relPath.length; i++) {// for files
 			main.Storage.Collect.relPath[i] = getRelPath(main.Storage.Collect.srcPath.get(i), main.Main.getRootSourcePath());
+		}
+		if (newBackUp) {
+			for (int i = 0; i < main.Storage.Collect.relEmptyFolderPath.length; i++) {// for folders
+				main.Storage.Collect.relEmptyFolderPath[i] = getRelPath(main.Storage.Collect.absolutEmptyFolderSourcePath.get(i), main.Main.getRootSourcePath());
+			}
 		}
 	}
 }
