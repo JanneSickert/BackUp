@@ -53,7 +53,7 @@ public interface Collect {
 	
 	@Comment(make = "write main.Storage.Collect.relPath to the path file",
 			param = {"append the paths if true", ""})
-	default public void writeRelPath(boolean append, boolean updateMode) {
+	default public void writeRelPath(boolean append) {
 		File f = new File(main.Main.getPathListPath());
 		File emptyFolder = new File(main.Main.getEmptyFolderPathList());
 		if (!(f.exists())) {
@@ -68,9 +68,7 @@ public interface Collect {
 				for (int i = 0; i < main.Storage.Collect.relPath.length - 1; i++) {
 					fwf.write(main.Storage.Collect.relPath[i] + "\n");
 				}
-				if (!updateMode) {
-					fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
-				}
+				fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
 				fwf.close();
 				if (main.Storage.Collect.relEmptyFolderPath != null) {
 					int len_ef = main.Storage.Collect.relEmptyFolderPath.length;

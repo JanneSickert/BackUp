@@ -132,7 +132,7 @@ public interface Update extends Collect, PathList, Access {
 		if (main.Storage.Collect.srcPath.size() != 0) {
 			main.Storage.Collect.relPath = new String[main.Storage.Collect.srcPath.size()];
 			makeRelPath(false);
-			writeRelPath(true, false);
+			writeRelPath(true);
 			int to = main.Storage.Update.relDestinationPath.size();
 			main.Main.userInterface.closeLoadingScreen();
 			for (int i = 0; i < missingIndex.size(); i++) {
