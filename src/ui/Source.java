@@ -1,6 +1,5 @@
 package ui;
 
-import java.io.File;
 import java.util.ArrayList;
 import enums.SettingType;
 
@@ -82,9 +81,9 @@ public class Source implements interfaces.UI{
 	}
 	
 	@Override
-	public void showNotFoundFiles(ArrayList<File> list) {
-		for (File f : list) {
-			p("missing file: " + f.getAbsolutePath());
+	public void showNotFoundFiles(ArrayList<main.Main.TwoFiles> list) {
+		for (main.Main.TwoFiles f : list) {
+			p("missing file: " + f.from.getAbsolutePath());
 		}
 	}
 }

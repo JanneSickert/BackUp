@@ -62,7 +62,7 @@ public interface Update extends Collect, PathList, Access {
 			try {
 				attrs = Files.readAttributes(path, BasicFileAttributes.class);
 			} catch (IOException e) {
-				main.Main.addErrorFile(path.toFile());
+				e.printStackTrace();
 				continue;
 			}
 			FileTime time = attrs.lastModifiedTime();
@@ -79,7 +79,7 @@ public interface Update extends Collect, PathList, Access {
 			File dataPath = new File(Main.getDataPath() + "/" + replaceList.get(i).des);
 			File from = new File(main.Storage.Update.absolutSourcePath.get(replaceList.get(i).src));
 			if (!(SettingType.COPY_ONLY == Main.setting)) {
-				byte[] fileInBytes = makeFileToByteArr(from);
+				byte[] fileInBytes = makeFileToByteArr(from, dataPath);
 				if (fileInBytes == null) {
 					continue;
 				} else {
@@ -140,7 +140,7 @@ public interface Update extends Collect, PathList, Access {
 				if (SettingType.COPY_ONLY == Main.setting) {
 					moveMethod.move(from, new File(Main.getDataPath() + "/" + to), null);
 				} else {
-					byte[] fileInBytes = makeFileToByteArr(from);
+					byte[] fileInBytes = makeFileToByteArr(from, new File(Main.getDataPath() + "/" + to));
 					if (fileInBytes == null) {
 						to--;
 					} else {

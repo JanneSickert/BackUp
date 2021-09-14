@@ -29,7 +29,7 @@ public class Main {
 	public static UI userInterface;
 	public static long lengthOfAllFiles = 0L;
 	static Calculate calculateMethod;
-	protected static ArrayList<File> errorFiles = new ArrayList<File>();
+	protected static ArrayList<TwoFiles> errorFiles = new ArrayList<TwoFiles>();
 	public static SettingType setting = null;
 
 	public static void main(String[] args) {
@@ -99,15 +99,31 @@ public class Main {
 		moveMethod.joinAll();
 		Main.NotFoundFiles notFoundFiles = new Main.NotFoundFiles();
 		notFoundFiles.updatePathList();
-		notFoundFiles.retry(moveMethod);
+		if (setting == SettingType.COPY_ONLY) {
+			notFoundFiles.retry(moveMethod);
+		} else {
+			// TODO Move method for large files.
+		}
 		if (errorFiles.size() != 0) {
 			userInterface.showNotFoundFiles(errorFiles);
 		}
 		userInterface.finishMessage();
 	}
+	
+	
+	public static class TwoFiles {
+		
+		public File from, to;
+		
+		public TwoFiles(File from, File to) {
+			this.from = from;
+			this.to = to;
+		}
+	}
 
-	public static synchronized void addErrorFile(File f) {
-		errorFiles.add(f);
+	
+	public static synchronized void addErrorFile(TwoFiles files) {
+		errorFiles.add(files);
 	}
 	
 	public static class NotFoundFiles implements Collect, PathList {
@@ -127,7 +143,7 @@ public class Main {
 			String[] nextPathList = new String[pathList.size() - errorFiles.size()];
 			int k = 0;
 			for (int i = 0; i < errorFiles.size(); i++) {
-				errorList[k] = getRelPath(errorFiles.get(i).getAbsolutePath(), getRootSourcePath());
+				errorList[k] = getRelPath(errorFiles.get(i).from.getAbsolutePath(), getRootSourcePath());
 				k++;
 			}
 			k = 0;
@@ -354,7 +370,7 @@ public class Main {
 			try {
 				Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
-				errorFiles.add(from);
+				errorFiles.add(new TwoFiles(from, to));
 			}
 		}
 

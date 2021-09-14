@@ -34,5 +34,5 @@ public interface UI {
 	
 	public void closeLoadingScreen();
 	
-	public void showNotFoundFiles(ArrayList<File> list);
+	public void showNotFoundFiles(ArrayList<main.Main.TwoFiles> list);
 }

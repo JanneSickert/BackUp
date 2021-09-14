@@ -37,7 +37,7 @@ public interface NewBackUp extends Collect, Access {
 			if (Main.setting == SettingType.COPY_ONLY) {
 				moveMethod.move(from, new File(Main.getDataPath() + "/" + k), null);
 			} else {
-				byte[] bArr = makeFileToByteArr(from);
+				byte[] bArr = makeFileToByteArr(from, new File(Main.getDataPath() + "/" + k));
 				if (bArr == null) {
 					k--;
 				} else {

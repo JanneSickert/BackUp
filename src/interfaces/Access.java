@@ -10,17 +10,17 @@ import main.Main;
 
 public interface Access {
 
-	default public byte[] makeFileToByteArr(File f) {
-		Path path = Paths.get(f.getAbsolutePath());
+	default public byte[] makeFileToByteArr(File from, File to) {
+		Path path = Paths.get(from.getAbsolutePath());
 		try {
-			if (f.length() > (long) Integer.MAX_VALUE) {
-				Main.addErrorFile(f);
+			if (from.length() > (long) Integer.MAX_VALUE - 1L) {
+				Main.addErrorFile(new main.Main.TwoFiles(from, to));
 				return null;
 			} else {
 				return (Files.readAllBytes(path));
 			}
 		} catch (IOException e) {
-			main.Main.addErrorFile(f);
+			main.Main.addErrorFile(new main.Main.TwoFiles(from, to));
 			return null;
 		}
 	}

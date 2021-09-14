@@ -12,10 +12,11 @@ public class Test {
 	public static void main(String[] args) {
 		// testMoveGui();
 		// testLoadingScreen();
-		// testErrorFiles();
-		testCollectPath();
+		testErrorFiles();
+		// testCollectPath();
 	}
 	
+	@SuppressWarnings("unused")
 	private static void testCollectPath() {
 		try {
 			new interfaces.Collect() {
@@ -36,11 +37,10 @@ public class Test {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private static void testErrorFiles() {
-		ArrayList<File> list = new ArrayList<File>();
+		ArrayList<main.Main.TwoFiles> list = new ArrayList<main.Main.TwoFiles>();
 		for (int i = 0; i < 50; i++) {
-			list.add(new File("C:/files/" + i));
+			list.add(new main.Main.TwoFiles(new File("C:/files/" + i), null));
 		}
 		new Gui().showNotFoundFiles(list);
 	}

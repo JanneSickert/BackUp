@@ -40,7 +40,7 @@ public interface Recovery extends PathList, Access {
 			if (SettingType.COPY_ONLY == Main.setting) {
 				moveMethod.move(a, b, null);
 			} else {
-				byte[] bArr = makeFileToByteArr(a);
+				byte[] bArr = makeFileToByteArr(a, b);
 				if (bArr == null) {
 					continue;
 				} else {

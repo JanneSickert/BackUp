@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -494,10 +493,10 @@ public class Gui implements UI {
 	}
 
 	@Override
-	public void showNotFoundFiles(ArrayList<File> list) {
+	public void showNotFoundFiles(ArrayList<main.Main.TwoFiles> list) {
 		ArrayList<String> string_list = new ArrayList<String>();
-		for (File f : list) {
-			string_list.add(f.getAbsolutePath());
+		for (main.Main.TwoFiles f : list) {
+			string_list.add(f.from.getAbsolutePath());
 		}
 		new MyFrame(new MyMissingPannel(string_list));
 	}
