@@ -2,6 +2,7 @@ package main;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -29,11 +30,11 @@ public class Main {
 	public static UI userInterface;
 	public static long lengthOfAllFiles = 0L;
 	static Calculate calculateMethod;
-	protected static ArrayList<TwoFiles> errorFiles = new ArrayList<TwoFiles>();
+	private static ArrayList<TwoFiles> errorFiles = new ArrayList<TwoFiles>();
 	public static SettingType setting = null;
 
 	public static void main(String[] args) {
-		System.out.println("@version 1.4");
+		System.out.println("@version 2.0");
 		userInterface = new ui.Source();
 		userInterface.showHead();
 		rootDestination = userInterface.getDestinationRootPath();
@@ -71,8 +72,9 @@ public class Main {
 		default:
 			calculateMethod = plus;
 			key = generateKey(setting);
-			moveMethod = getCryptMove();
+			moveMethod = getCryptMove(false);
 		}
+		boolean recoveryMove = false;
 		if (new File(getPathListPath()).exists()) {
 			boolean update = userInterface.updateOrRecover();
 			if (update) {
@@ -81,10 +83,11 @@ public class Main {
 				moveMethod.joinAll();
 				main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 			} else {// recovery
+				recoveryMove = true;
 				recoveryOutputPath = userInterface.getRecoveryOutputPath();
 				if (setting != SettingType.COPY_ONLY) {
 					calculateMethod = minus;
-					moveMethod = getCryptMove();
+					moveMethod = getCryptMove(false);
 				}
 				new Recovery() {
 				}.start(moveMethod);
@@ -98,11 +101,21 @@ public class Main {
 		}
 		moveMethod.joinAll();
 		Main.NotFoundFiles notFoundFiles = new Main.NotFoundFiles();
-		notFoundFiles.updatePathList();
-		if (setting == SettingType.COPY_ONLY) {
-			notFoundFiles.retry(moveMethod);
-		} else {
-			// TODO Move method for large files.
+		if (!(recoveryMove)) {
+			notFoundFiles.updatePathList();
+			if (setting == SettingType.COPY_ONLY) {
+				notFoundFiles.retry(moveMethod);
+				moveMethod.joinAll();
+			} else {
+				notFoundFiles.retry(getCryptMove(true));
+			}
+		} else {// recovery large files
+			if (setting == SettingType.COPY_ONLY) {
+				notFoundFiles.retry(moveMethod);
+				moveMethod.joinAll();
+			} else {
+				notFoundFiles.retryRecovery(getCryptMove(true));
+			}
 		}
 		if (errorFiles.size() != 0) {
 			userInterface.showNotFoundFiles(errorFiles);
@@ -133,7 +146,57 @@ public class Main {
 		@Comment(make = "Try to process the files that were "
 				+ "previously used by another process, deleted or moved.")
 		void retry(Move moveMethod) {
-			
+			ArrayList<TwoFiles> localErrorFiles = new ArrayList<TwoFiles>();
+			for (int i = 0; i < errorFiles.size(); i++) {
+				localErrorFiles.add(errorFiles.get(i));
+			}
+			errorFiles = new ArrayList<TwoFiles>();
+			for (int i = 0; i < localErrorFiles.size(); i++) {
+				moveMethod.move(localErrorFiles.get(i).from, localErrorFiles.get(i).to, key);
+				if (i == 0) {
+					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()), Position.FIRST);
+				} else if (localErrorFiles.size() - 1 == i) {
+					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()), Position.LAST);
+				} else {
+					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()), Position.CENTER);
+				}
+			}
+			moveMethod.joinAll();
+		}
+		
+		void retryRecovery(Move moveMethod) {
+			ArrayList<TwoFiles> localErrorFiles = new ArrayList<TwoFiles>();
+			for (int i = 0; i < errorFiles.size(); i++) {
+				localErrorFiles.add(errorFiles.get(i));
+			}
+			errorFiles = new ArrayList<TwoFiles>();
+			for (int i = 0; i < localErrorFiles.size(); i++) {
+				moveMethod.move(localErrorFiles.get(i).from, localErrorFiles.get(i).to, key);
+			}
+			moveMethod.joinAll();
+		}
+		
+		enum Position {
+			FIRST, CENTER, LAST
+		}
+		
+		private void toPathList(String relPath, Position position) {
+			try {
+				FileWriter fwf = new FileWriter(new File(getPathListPath()), true);
+				switch (position) {
+				case FIRST:
+					fwf.write("\n" + relPath);
+					break;
+				case CENTER:
+					fwf.write(relPath + "\n");
+					break;
+				case LAST:
+					fwf.write(relPath);
+				}
+				fwf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		@Comment(make = "Deletes the paths from the path list that "
@@ -147,7 +210,7 @@ public class Main {
 				k++;
 			}
 			k = 0;
-			for (int i = 0; i < (pathList.size() - errorFiles.size()); i++) {
+			for (int i = 0; i < pathList.size(); i++) {
 				if (!(existInErrorList(pathList.get(i)))) {
 					nextPathList[k] = pathList.get(i);
 					k++;
@@ -249,10 +312,12 @@ public class Main {
 	public static class CryptedMove implements Move {
 
 		final int NR_OF_THREADS = 7;
-		CryptoThread[] thread = new CryptoThread[NR_OF_THREADS];
+		Thread[] thread = new Thread[NR_OF_THREADS];
 		int threadIndex = 0;
+		private boolean largeFile = false;
 
-		public CryptedMove() {
+		public CryptedMove(boolean largeFile) {
+			this.largeFile = largeFile;
 			for (int i = 0; i < NR_OF_THREADS; i++) {
 				thread[i] = null;
 			}
@@ -261,7 +326,11 @@ public class Main {
 		@Override
 		public void move(File from, File to, byte[] fileInBytes) {
 			if (thread[threadIndex] == null) {
-				thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod, fileInBytes);
+				if (largeFile) {
+					thread[threadIndex] = new LargeCryptoThread(new TwoFiles(from, to), Main.key.clone(), Main.calculateMethod);
+				} else {
+					thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod, fileInBytes);
+				}
 				thread[threadIndex].start();
 				threadIndex++;
 				if (threadIndex == NR_OF_THREADS) {
@@ -272,7 +341,11 @@ public class Main {
 				do {
 					if (!(thread[threadIndex].isAlive())) {
 						b = false;
-						thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod, fileInBytes);
+						if (largeFile) {
+							thread[threadIndex] = new LargeCryptoThread(new TwoFiles(from, to), Main.key.clone(), Main.calculateMethod);
+						} else {
+							thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod, fileInBytes);
+						}
 						thread[threadIndex].start();
 					}
 					threadIndex++;
@@ -287,7 +360,9 @@ public class Main {
 		public void joinAll() {
 			for (int i = 0; i < NR_OF_THREADS; i++) {
 				try {
-					thread[i].join();
+					if (thread[i] != null) {
+						thread[i].join();
+					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -295,8 +370,8 @@ public class Main {
 		}
 	}
 
-	private static Move getCryptMove() {
-		return ((Move) new Main.CryptedMove());
+	private static Move getCryptMove(boolean largeFile) {
+		return ((Move) new Main.CryptedMove(largeFile));
 	}
 
 	@SuppressWarnings("incomplete-switch")

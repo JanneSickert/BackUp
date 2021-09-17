@@ -17,7 +17,7 @@ public class Source implements interfaces.UI{
 
 	@Override
 	public SettingType getSettings() {
-		return (SettingType.COPY_ONLY);
+		return (SettingType.PASSWORD_AND_KEY_FILE);
 	}
 
 	@Override
@@ -82,6 +82,7 @@ public class Source implements interfaces.UI{
 	
 	@Override
 	public void showNotFoundFiles(ArrayList<main.Main.TwoFiles> list) {
+		p("------------------------------------------------------");
 		for (main.Main.TwoFiles f : list) {
 			p("missing file: " + f.from.getAbsolutePath());
 		}

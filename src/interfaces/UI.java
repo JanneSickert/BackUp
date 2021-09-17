@@ -1,6 +1,5 @@
 package interfaces;
 
-import java.io.File;
 import java.util.ArrayList;
 import enums.SettingType;
 
