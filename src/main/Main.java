@@ -154,11 +154,11 @@ public class Main {
 			for (int i = 0; i < localErrorFiles.size(); i++) {
 				moveMethod.move(localErrorFiles.get(i).from, localErrorFiles.get(i).to, key);
 				if (i == 0) {
-					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()), Position.FIRST);
+					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()));
 				} else if (localErrorFiles.size() - 1 == i) {
-					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()), Position.LAST);
+					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()));
 				} else {
-					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()), Position.CENTER);
+					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()));
 				}
 			}
 			moveMethod.joinAll();
@@ -176,23 +176,10 @@ public class Main {
 			moveMethod.joinAll();
 		}
 		
-		enum Position {
-			FIRST, CENTER, LAST
-		}
-		
-		private void toPathList(String relPath, Position position) {
+		private void toPathList(String relPath) {
 			try {
 				FileWriter fwf = new FileWriter(new File(getPathListPath()), true);
-				switch (position) {
-				case FIRST:
-					fwf.write("\n" + relPath);
-					break;
-				case CENTER:
-					fwf.write(relPath + "\n");
-					break;
-				case LAST:
-					fwf.write(relPath);
-				}
+				fwf.write("\n" + relPath);
 				fwf.close();
 			} catch (IOException e) {
 				e.printStackTrace();

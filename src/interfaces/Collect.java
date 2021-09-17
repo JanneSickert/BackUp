@@ -68,10 +68,12 @@ public interface Collect {
 				for (int i = 0; i < main.Storage.Collect.relPath.length - 1; i++) {
 					fwf.write(main.Storage.Collect.relPath[i] + "\n");
 				}
-				fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
+				if (main.Storage.Collect.relPath.length > 0) {
+					fwf.write(main.Storage.Collect.relPath[main.Storage.Collect.relPath.length - 1]);
+				}
 				fwf.close();
 				if (main.Storage.Collect.relEmptyFolderPath != null) {
-					int len_ef = main.Storage.Collect.relEmptyFolderPath.length;
+					int len_ef = main.Storage.Collect.relEmptyFolderPath.length;// length empty folder
 					if (len_ef > 0) {
 						FileWriter efw = new FileWriter(emptyFolder, append);// for empty folders
 						for (int i = 0; i < main.Storage.Collect.relEmptyFolderPath.length - 1; i++) {
