@@ -20,16 +20,25 @@ public class LargeCryptoThread extends Thread {
 	private byte[] buffer = new byte[BLOCK_SIZE];
 	private int bytesPerBlock = 0;
 	private FileWriter fwf;
+	private boolean recoveryMove = false;
+	private int nrOfFiles = 0;
+	private String dataPath = null;
 	
-	LargeCryptoThread(Main.TwoFiles files, byte[] key, Calculate calculateMethod) {
+	LargeCryptoThread(Main.TwoFiles files, byte[] key, Calculate calculateMethod, boolean recoveryMove, int nrOfFiles, String dataPath) {
 		this.files = files;
 		this.key = key;
 		this.calculateMethod = calculateMethod;
 		this.keyIndex = 0;
+		this.recoveryMove = recoveryMove;
+		this.nrOfFiles = nrOfFiles;
+		this.dataPath = dataPath;
 	}
 	
 	@Override
 	public void run() {
+		if (!recoveryMove) {
+			files.to = new File(dataPath + "/" + nrOfFiles);
+		}
 		print(files.from, files.to);
 		try {
 			FileInputStream fin = new FileInputStream(files.from.getAbsolutePath());

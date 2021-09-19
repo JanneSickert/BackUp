@@ -32,6 +32,8 @@ public class Main {
 	static Calculate calculateMethod;
 	private static ArrayList<TwoFiles> errorFiles = new ArrayList<TwoFiles>();
 	public static SettingType setting = null;
+	private static boolean recoveryMove = false;
+	private static int nrOfFiles = 0;
 
 	public static void main(String[] args) {
 		System.out.println("@version 2.0");
@@ -74,7 +76,6 @@ public class Main {
 			key = generateKey(setting);
 			moveMethod = getCryptMove(false);
 		}
-		boolean recoveryMove = false;
 		if (new File(getPathListPath()).exists()) {
 			boolean update = userInterface.updateOrRecover();
 			if (update) {
@@ -99,20 +100,17 @@ public class Main {
 			moveMethod.joinAll();
 			main.MyDate.BackUpTime.createTimeFile(Main.getTimeFilePath());
 		}
-		moveMethod.joinAll();
 		Main.NotFoundFiles notFoundFiles = new Main.NotFoundFiles();
 		if (!(recoveryMove)) {
 			notFoundFiles.updatePathList();
 			if (setting == SettingType.COPY_ONLY) {
 				notFoundFiles.retry(moveMethod);
-				moveMethod.joinAll();
 			} else {
 				notFoundFiles.retry(getCryptMove(true));
 			}
 		} else {// recovery large files
 			if (setting == SettingType.COPY_ONLY) {
 				notFoundFiles.retry(moveMethod);
-				moveMethod.joinAll();
 			} else {
 				notFoundFiles.retryRecovery(getCryptMove(true));
 			}
@@ -134,7 +132,7 @@ public class Main {
 		}
 	}
 
-	
+
 	public static synchronized void addErrorFile(TwoFiles files) {
 		errorFiles.add(files);
 	}
@@ -151,15 +149,10 @@ public class Main {
 				localErrorFiles.add(errorFiles.get(i));
 			}
 			errorFiles = new ArrayList<TwoFiles>();
+			nrOfFiles = new File(getDataPath()).listFiles().length;
 			for (int i = 0; i < localErrorFiles.size(); i++) {
 				moveMethod.move(localErrorFiles.get(i).from, localErrorFiles.get(i).to, key);
-				if (i == 0) {
-					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()));
-				} else if (localErrorFiles.size() - 1 == i) {
-					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()));
-				} else {
-					toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()));
-				}
+				toPathList(getRelPath(localErrorFiles.get(i).from.getAbsolutePath(), getRootSourcePath()));
 			}
 			moveMethod.joinAll();
 		}
@@ -314,11 +307,12 @@ public class Main {
 		public void move(File from, File to, byte[] fileInBytes) {
 			if (thread[threadIndex] == null) {
 				if (largeFile) {
-					thread[threadIndex] = new LargeCryptoThread(new TwoFiles(from, to), Main.key.clone(), Main.calculateMethod);
+					thread[threadIndex] = new LargeCryptoThread(new TwoFiles(from, to), Main.key.clone(), Main.calculateMethod, Main.recoveryMove, nrOfFiles, getDataPath());
 				} else {
 					thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod, fileInBytes);
 				}
 				thread[threadIndex].start();
+				Main.nrOfFiles++;
 				threadIndex++;
 				if (threadIndex == NR_OF_THREADS) {
 					threadIndex = 0;
@@ -329,11 +323,12 @@ public class Main {
 					if (!(thread[threadIndex].isAlive())) {
 						b = false;
 						if (largeFile) {
-							thread[threadIndex] = new LargeCryptoThread(new TwoFiles(from, to), Main.key.clone(), Main.calculateMethod);
+							thread[threadIndex] = new LargeCryptoThread(new TwoFiles(from, to), Main.key.clone(), Main.calculateMethod, Main.recoveryMove, nrOfFiles, getDataPath());
 						} else {
 							thread[threadIndex] = new CryptoThread(from, to, Main.key.clone(), Main.calculateMethod, fileInBytes);
 						}
 						thread[threadIndex].start();
+						Main.nrOfFiles++;
 					}
 					threadIndex++;
 					if (threadIndex == NR_OF_THREADS) {
