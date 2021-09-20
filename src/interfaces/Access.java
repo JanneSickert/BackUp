@@ -12,7 +12,7 @@ public interface Access {
 	default public byte[] makeFileToByteArr(File from, File to) {
 		Path path = Paths.get(from.getAbsolutePath());
 		try {
-			if (from.length() > (long) Integer.MAX_VALUE - 1L) {
+			if (from.length() > (long) Integer.MAX_VALUE / 2) {
 				Main.addErrorFile(new main.Main.TwoFiles(from, to));
 				return null;
 			} else {

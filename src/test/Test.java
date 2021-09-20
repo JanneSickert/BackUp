@@ -6,17 +6,61 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import ui.Gui.MoveGui;
 import ui.Gui;
+import main.LargeCryptoThread;
 
 public class Test {
 
 	public static void main(String[] args) {
-		// testMoveGui();
-		// testLoadingScreen();
-		testErrorFiles();
-		// testCollectPath();
+		final int TEST_NR = 4;
+		switch (TEST_NR) {
+		case 0:
+			testMoveGui();
+			break;
+		case 1:
+			testLoadingScreen();
+			break;
+		case 2:
+			testErrorFiles();
+			break;
+		case 3:
+			testCollectPath();
+			break;
+		case 4:
+			dynamicTest();
+			break;
+		case 5:
+			testLargeCryptoThread();
+			break;
+		}
 	}
 	
-	@SuppressWarnings("unused")
+	private static void testLargeCryptoThread() {
+		final String FILE_NAME = "f0_.js", PATH = "C:/Users/janne/Desktop/test/src";
+		String src = PATH + "/" + FILE_NAME, des = "C:/Users/janne/Desktop/test/" + "test2.js";
+		main.Main.userInterface = new ui.Source();
+		LargeCryptoThread lct = new LargeCryptoThread(
+				new main.Main.TwoFiles(new File(src), new File(des)),
+				new byte[] {'1', '2', '3', '4'},
+				main.Main.plus,
+				true,
+				0,
+				""
+				);
+		lct.start();
+		try {
+			lct.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("finish");
+	}
+
+	private static void dynamicTest() {
+		main.Main.userInterface = new ui.Source();
+		main.Main.start();
+		main.Main.start();
+	}
+	
 	private static void testCollectPath() {
 		try {
 			new interfaces.Collect() {
@@ -45,13 +89,11 @@ public class Test {
 		new Gui().showNotFoundFiles(list);
 	}
 
-	@SuppressWarnings("unused")
 	private static void testLoadingScreen() {
         ui.Gui gui = new ui.Gui();
         gui.showLoadingScreen("test message............");
 	}
 
-	@SuppressWarnings("unused")
 	private static void testMoveGui() {
         AtTest<MoveGui> c;
         c = new Test.AtTest<>() {

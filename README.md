@@ -1,19 +1,7 @@
 # BackUp
-Create a encrypted backup with a fast update mode.
+Create a encrypted backup with a update mode.
 <br>
 The update mode only copies new and changed files.
-<h2>Speed Copy</h2>
-- My program: 12.9s for 3.1GB<br>
-- Windows:    24.5s for 3.1GB
-<h2>Speed encryption</h2>
-- My program: 12.5s for 3.1GB<br>
-- win rar:    1min 17.7s for 3.1GB
-<br>
-But the speed has its price. I don't use any key expansion or compression algorithms.
-But for me is speed more important because a backup is something
-you store on a external HDD on a save place.
-Secret data should be encrypted stored all the time.
-So it would make no sence to use a super secure encryption.
 <br>
 <h1><u>How to use</u></h1>
 These are the back-up options.
