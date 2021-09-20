@@ -78,12 +78,16 @@ public class LargeCryptoThread extends Thread {
 	private void writeBlock(boolean lastBlock) throws IOException {
 		byte[] localBuffer = null;
 		if (lastBlock) {
-			localBuffer = new byte[bytesPerBlock];
+			if (bytesPerBlock != 0) {
+				localBuffer = new byte[bytesPerBlock];
+			}
 			for (int i = 0; i < bytesPerBlock; i++) {
 				localBuffer[i] = buffer[i];
 			}
 			try {
-			   output.write(localBuffer);
+			   if (bytesPerBlock != 0) {
+				   output.write(localBuffer);
+			   }
 			} finally {
 			   output.close();
 			}
