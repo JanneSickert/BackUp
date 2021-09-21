@@ -26,7 +26,7 @@ public class Main {
 	private static String keyFilePath = null;
 	private static String password = null;
 	private static String recoveryOutputPath = null;
-	private static byte[] key;
+	private static byte[] key = null;
 	public static UI userInterface;
 	public static long lengthOfAllFiles = 0L;
 	static Calculate calculateMethod;
@@ -54,16 +54,12 @@ public class Main {
 		if (settingFileExists) {
 			String str = ix_setting.inport();
 			setting = SettingType.getTypeByName(str);
-			rootSource = ix_source.inport();
 		} else {
 			rootSource = userInterface.getSourceRootPath();
 			setting = userInterface.getSettings();
 			ix_setting.export(setting.toString());
 			ix_source.export(rootSource);
 		}
-		userInterface.showLoadingScreen("Determine amount of data...");
-		getLengthOfAllFiles();
-		userInterface.closeLoadingScreen();
 		if (setting == SettingType.KEY_FILE || setting == SettingType.PASSWORD_AND_KEY_FILE) {
 			keyFilePath = userInterface.getPathForKeyFile();
 		}
@@ -80,6 +76,13 @@ public class Main {
 			key = generateKey(setting);
 			moveMethod = getCryptMove(false);
 		}
+		if (settingFileExists) {
+			decryptAllSettingFiles();
+		}
+		rootSource = ix_source.inport();
+		userInterface.showLoadingScreen("Determine amount of data...");
+		getLengthOfAllFiles();
+		userInterface.closeLoadingScreen();
 		if (new File(getPathListPath()).exists()) {
 			boolean update = userInterface.updateOrRecover();
 			if (update) {
@@ -122,7 +125,31 @@ public class Main {
 		if (errorFiles.size() != 0) {
 			userInterface.showNotFoundFiles(errorFiles);
 		}
+		if (setting != SettingType.COPY_ONLY) {
+			encryptAllSettingFiles();
+		}
 		userInterface.finishMessage();
+	}
+	
+	private static void encryptAllSettingFiles() {
+		for (SettingEncryption se : getSettingEncryption()) {
+			se.encrypt();
+		}
+	}
+	
+	private static void decryptAllSettingFiles() {
+		for (SettingEncryption se : getSettingEncryption()) {
+			se.decrypt();
+		}
+	}
+	
+	private static SettingEncryption[] getSettingEncryption() {
+		return (new SettingEncryption[] {
+				new SettingEncryption(getEmptyFolderPathList(), key, true),
+				new SettingEncryption(getPathListPath(), key, true),
+				new SettingEncryption(getSourceFilePath(), key, false),
+				new SettingEncryption(getTimeFilePath(), key, false)
+		});
 	}
 	
 	public static class TwoFiles {

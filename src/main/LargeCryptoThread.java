@@ -22,6 +22,7 @@ public class LargeCryptoThread extends Thread {
 	private int nrOfFiles = 0;
 	private String dataPath = null;
 	private FileOutputStream output = null;
+	private boolean settingsEncryption = false;
 	
 	public LargeCryptoThread(Main.TwoFiles files, byte[] key, Calculate calculateMethod, boolean recoveryMove, int nrOfFiles, String dataPath) {
 		this.files = files;
@@ -33,12 +34,23 @@ public class LargeCryptoThread extends Thread {
 		this.dataPath = dataPath;
 	}
 	
+	public LargeCryptoThread(Main.TwoFiles files, byte[] key, Calculate calculateMethod, boolean recoveryMove, boolean settingsEncryption) {
+		this.files = files;
+		this.key = key;
+		this.calculateMethod = calculateMethod;
+		this.keyIndex = 0;
+		this.recoveryMove = recoveryMove;
+		this.settingsEncryption = settingsEncryption;
+	}
+	
 	@Override
 	public void run() {
 		if (!recoveryMove) {
 			files.to = new File(dataPath + "/" + nrOfFiles);
 		}
-		print(files.from, files.to);
+		if (!settingsEncryption) {
+			print(files.from, files.to);
+		}
 		try {
 			FileInputStream fin = new FileInputStream(files.from.getAbsolutePath());
 			BufferedInputStream bufin = new BufferedInputStream(fin);
@@ -54,6 +66,7 @@ public class LargeCryptoThread extends Thread {
 				}
 			}
 			writeBlock(true);
+			bufin.close();
 		} catch (FileNotFoundException e) {
 			Main.addErrorFile(files);
 		} catch (IOException e) {
