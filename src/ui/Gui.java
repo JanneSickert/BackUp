@@ -432,7 +432,6 @@ public class Gui implements UI {
 
 	@Override
 	public void finishMessage() {
-		System.exit(0);
 	}
 
 	static class LoadingPannel extends JPanel {

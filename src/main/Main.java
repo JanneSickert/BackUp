@@ -36,7 +36,7 @@ public class Main {
 	private static int nrOfFiles = 0;
 
 	public static void main(String[] args) {
-		System.out.println("@version 2.0");
+		System.out.println("@version 2.1");
 		userInterface = new ui.Gui();
 		start();
 	}
@@ -124,6 +124,7 @@ public class Main {
 		}
 		if (errorFiles.size() != 0) {
 			userInterface.showNotFoundFiles(errorFiles);
+			notFoundFiles.updatePathList();
 		}
 		if (setting != SettingType.COPY_ONLY) {
 			encryptAllSettingFiles();
