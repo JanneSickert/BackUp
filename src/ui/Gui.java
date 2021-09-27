@@ -37,6 +37,7 @@ public class Gui implements UI {
 	private final String ERROR_MESSAGE = "The text field is empty or does not contain a valid file path.";
 	private final String[] ERROR_MESSAGE_PASSWORD = { "The password field is empty!", "The passwords are different!" };
 	private Timer timer;
+	private boolean bool_notFoundFiles = false;
 
 	private MyFrame loadingFrame = null;
 
@@ -432,6 +433,12 @@ public class Gui implements UI {
 
 	@Override
 	public void finishMessage() {
+		if (moveGui != null) {
+			moveGui.frame.setVisible(false);
+		}
+		if (!bool_notFoundFiles) {
+			System.exit(0);
+		}
 	}
 
 	static class LoadingPannel extends JPanel {
@@ -493,6 +500,7 @@ public class Gui implements UI {
 
 	@Override
 	public void showNotFoundFiles(ArrayList<main.Main.TwoFiles> list) {
+		bool_notFoundFiles = true;
 		ArrayList<String> string_list = new ArrayList<String>();
 		for (main.Main.TwoFiles f : list) {
 			string_list.add(f.from.getAbsolutePath());
@@ -506,6 +514,7 @@ public class Gui implements UI {
 
 		public MyMissingPannel(ArrayList<String> list) {
 			super.setLayout(new GridLayout(2, 1));
+			moveGui.frame.setVisible(false);
 			JTextArea output = new JTextArea();
 			output.setLocation(20, 100);
 			output.setSize(660, 600);
