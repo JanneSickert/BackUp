@@ -96,7 +96,7 @@ public class Test {
 
 	private static void testMoveGui() {
         AtTest<MoveGui> c;
-        c = new Test.AtTest<>() {
+        c = new Test.AtTest<MoveGui>() {
         	@Override
         	public void eql() {
         		MoveGui mg = new ui.Gui().new MoveGui();

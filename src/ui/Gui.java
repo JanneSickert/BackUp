@@ -300,7 +300,8 @@ public class Gui implements UI {
 
 	@Override
 	public String getSourceRootPath() {
-		return (askPath("Path of folders to copy"));
+		String p = askPath("Path of folders to copy");
+		return p;
 	}
 
 	@Override
@@ -309,7 +310,7 @@ public class Gui implements UI {
 	}
 
 	@Override
-	public boolean updateOrRecover() {
+	public RecoverOrUpdate updateOrRecover() {
 		messageNotSent = true;
 		JPanel panel = new JPanel();
 		final int NR_ELEMENTS = 2;
@@ -342,7 +343,11 @@ public class Gui implements UI {
 			}
 		}
 		frame.end();
-		return Gui.update;
+		if (Gui.update) {
+			return RecoverOrUpdate.UPDATE;
+		} else {
+			return RecoverOrUpdate.RECOVER;
+		}
 	}
 
 	@Override

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+
+import enums.RecoverOrUpdate;
 import enums.SettingType;
 import interfaces.Calculate;
 import interfaces.Move;
@@ -36,8 +38,8 @@ public class Main {
 	private static int nrOfFiles = 0;
 
 	public static void main(String[] args) {
-		System.out.println("@version 2.1");
-		userInterface = new ui.Gui();
+		System.out.println("@version 2.2");
+		userInterface = new ui.Cmd();
 		start();
 	}
 	
@@ -84,7 +86,7 @@ public class Main {
 		getLengthOfAllFiles();
 		userInterface.closeLoadingScreen();
 		if (new File(getPathListPath()).exists()) {
-			boolean update = userInterface.updateOrRecover();
+			boolean update = (userInterface.updateOrRecover() == RecoverOrUpdate.UPDATE);
 			if (update) {
 				new Update() {
 				}.update(moveMethod);

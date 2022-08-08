@@ -2,6 +2,7 @@ package interfaces;
 
 import java.util.ArrayList;
 import enums.SettingType;
+import enums.RecoverOrUpdate;
 
 public interface UI {
 
@@ -9,15 +10,11 @@ public interface UI {
 	
 	public SettingType getSettings();
 	
+	public RecoverOrUpdate updateOrRecover();
+	
 	public String getSourceRootPath();
 	
 	public String getDestinationRootPath();
-	
-	/**
-	 * 
-	 * @return true if update
-	 */
-	public boolean updateOrRecover();
 	
 	public String getPathForKeyFile();
 	

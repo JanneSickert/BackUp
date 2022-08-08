@@ -30,7 +30,7 @@ public interface NewBackUp extends Collect, Access {
 
 	@Comment(make = "This is the actual copying or encryption process",
 			param = "Can contain two methods: the one to encrypt or the one to copy.")
-	private void moveFiles(Move moveMethod) {
+	default void moveFiles(Move moveMethod) {
 		int k = 0;
 		for (int i = 0; i < main.Storage.Collect.srcPath.size(); i++) {
 			File from = new File(main.Storage.Collect.srcPath.get(i));

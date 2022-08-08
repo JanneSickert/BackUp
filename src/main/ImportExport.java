@@ -45,6 +45,7 @@ public class ImportExport {
 				f.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
+				System.out.println(f.getAbsolutePath());
 			}
 		}// write file
 		try {
@@ -53,6 +54,7 @@ public class ImportExport {
 			fwf.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.out.println(f.getAbsolutePath());
 		}
 	}
 }

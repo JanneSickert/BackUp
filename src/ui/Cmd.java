@@ -2,6 +2,8 @@ package ui;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import enums.RecoverOrUpdate;
 import enums.SettingType;
 
 public class Cmd implements interfaces.UI{
@@ -64,13 +66,17 @@ public class Cmd implements interfaces.UI{
 	}
 
 	@Override
-	public boolean updateOrRecover() {
+	public RecoverOrUpdate updateOrRecover() {
 		@SuppressWarnings("resource")
 		final Scanner sc = new Scanner(System.in);
 		p("Type 0 to recover files from BackUp");
 		p("Type 1 to update the BackUp");
 		int nr = sc.nextInt();
-		return (nr == 1);
+		if (nr == 0) {
+			return RecoverOrUpdate.RECOVER;
+		} else {
+			return RecoverOrUpdate.UPDATE;
+		}
 	}
 
 	@Override

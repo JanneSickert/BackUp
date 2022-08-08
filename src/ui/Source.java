@@ -1,6 +1,8 @@
 package ui;
 
 import java.util.ArrayList;
+
+import enums.RecoverOrUpdate;
 import enums.SettingType;
 
 public class Source implements interfaces.UI{
@@ -32,14 +34,9 @@ public class Source implements interfaces.UI{
 		return p;
 	}
 
-	/**
-	 *  Type 0 to recover files from BackUp
-	 *	Type 1 to update the BackUp
-	 */
 	@Override
-	public boolean updateOrRecover() {
-		int nr = 0;// type here!
-		return (nr == 1);
+	public RecoverOrUpdate updateOrRecover() {
+		return RecoverOrUpdate.UPDATE;
 	}
 
 	@Override
