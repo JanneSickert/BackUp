@@ -37,7 +37,7 @@ public class Test {
 	private static void testLargeCryptoThread() {
 		final String FILE_NAME = "f0_.js", PATH = "C:/Users/janne/Desktop/test/src";
 		String src = PATH + "/" + FILE_NAME, des = "C:/Users/janne/Desktop/test/" + "test2.js";
-		main.Main.userInterface = new ui.Source();
+		main.Main.userInterface = new test.Source();
 		LargeCryptoThread lct = new LargeCryptoThread(
 				new main.Main.TwoFiles(new File(src), new File(des)),
 				new byte[] {'1', '2', '3', '4'},
@@ -56,7 +56,7 @@ public class Test {
 	}
 
 	private static void dynamicTest() {
-		main.Main.userInterface = new ui.Source();
+		main.Main.userInterface = new test.Source();
 		main.Main.start();
 		main.Main.start();
 	}

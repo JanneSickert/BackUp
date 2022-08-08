@@ -26,7 +26,7 @@ import enums.SettingType;
 import interfaces.UI;
 import test.Check_IO;
 
-public class Gui implements UI {
+class Gui implements UI {
 
 	public static SettingType type;
 	public static boolean update;

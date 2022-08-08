@@ -6,7 +6,7 @@ import java.util.Scanner;
 import enums.RecoverOrUpdate;
 import enums.SettingType;
 
-public class Cmd implements interfaces.UI{
+class Cmd implements interfaces.UI{
 	
 	private void p(String text) {
 		System.out.println(text);
