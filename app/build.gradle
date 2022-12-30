@@ -1,0 +1,16 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+application {
+    mainClassName = 'main.Main'
+}
