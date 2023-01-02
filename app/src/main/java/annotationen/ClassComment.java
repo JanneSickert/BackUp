@@ -1,13 +1,13 @@
 package annotationen;
 
-import static java.lang.annotation.RetentionPolicy.CLASS;
-
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 
-@Retention(CLASS)
+@Retention(RUNTIME)
 public @interface ClassComment {
 
 	String author() default "Janne";
-	byte[] version();
+	String version();
+	String compilerVersion() default "";
 	String comment() default "";
 }

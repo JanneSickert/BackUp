@@ -14,7 +14,7 @@ import annotationen.Comment;
 		comment = "Contain classes to create the -documentation html file."
 				+ "This classes are not a part of the Project.",
 		author = "Janne",
-		version = {3, 0, 0})
+		version = "3.0.0")
 class Create extends ui.CommandLineFunctions {
 
 	public static class Record {

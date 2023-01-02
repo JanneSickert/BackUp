@@ -12,7 +12,7 @@ import annotationen.ClassComment;
 		comment = "This class is only there to write strings in files"
 				+ "and to read strings from files.",
 		author = "Janne",
-		version = {3, 0, 0})
+		version = "3.0.0")
 public class ImportExport extends ui.CommandLineFunctions {
 
 	private File f;

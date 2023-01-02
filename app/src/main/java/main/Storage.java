@@ -3,7 +3,7 @@ package main;
 import java.util.ArrayList;
 import annotationen.ClassComment;
 
-@ClassComment(author = "Janne", version = {3, 0, 0},
+@ClassComment(author = "Janne", version = "3.0.0",
 comment = "this class contains the attributes of the interfaces.")
 public class Storage {
 

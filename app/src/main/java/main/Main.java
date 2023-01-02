@@ -29,7 +29,11 @@ import annotationen.ClassComment;
 import annotationen.Comment;
 import annotationen.EntryPoint;
 
-@ClassComment(author = "Janne", version = {3, 0, 0})
+@ClassComment(
+		author = "Janne", 
+		version = "3.0.0", 
+		comment = "Gradle Project",
+		compilerVersion = "Java 8")
 public class Main extends ui.CommandLineFunctions {
 
 	private static String rootSource = null;
@@ -48,7 +52,7 @@ public class Main extends ui.CommandLineFunctions {
 	private static Map<String, List<Object>> map;
 
 	public static void main(String[] args) {
-		p("@version 3.0");
+		printInfos();
 		createHashMap();
 		map.get("Klasse").add(Main.class);
 		map.get("Klasse").add(annotationen.Comment.class);
@@ -87,6 +91,22 @@ public class Main extends ui.CommandLineFunctions {
 				}
 			}
 		}
+	}
+	
+	private static void printInfos() {
+		Class<?> myClass = main.Main.class;
+		annotationen.ClassComment annotation;
+		annotation = myClass.getAnnotation(annotationen.ClassComment.class);
+		if (annotation != null) {
+			p("@author: " + annotation.author());
+			p("@version: " + annotation.version().toString());
+			p("@comment: " + annotation.comment());
+			p("@compilerVersion: " + annotation.compilerVersion());
+		}
+		String version = Runtime.class.getPackage().getImplementationVersion();
+		p("Java Runtime Version: " + version);
+		version = System.getProperty("java.runtime.version");
+		p("Java Runtime Version: " + version);
 	}
 
 	private static void createHashMap() {
