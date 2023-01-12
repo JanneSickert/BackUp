@@ -32,8 +32,8 @@ import annotationen.EntryPoint;
 @ClassComment(
 		author = "Janne", 
 		version = "3.0.0", 
-		comment = "Gradle Project",
-		compilerVersion = "Java 9")
+		comment = "Programm to create a backup",
+		compilerVersion = "Java 14")
 public class Main extends ui.CommandLineFunctions {
 
 	private static String rootSource = null;
@@ -80,10 +80,16 @@ public class Main extends ui.CommandLineFunctions {
 					if (entryPointMethod.isAnnotationPresent(EntryPoint.class)) {
 						try {
 							entryPointMethod.invoke(null);
-						} catch (IllegalAccessException | 
-							   IllegalArgumentException | 
-							   InvocationTargetException e) {
-								e.printStackTrace();
+						} catch (IllegalAccessException | IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+						    Throwable cause = e.getCause();
+						    StackTraceElement[] stackTrace = cause.getStackTrace();
+						    for (StackTraceElement element : stackTrace) {
+						        p("error -> " + element);
+						    }
+						    p("ERROR: The method threw an exception: " + cause);
+						    p("ERROR: " + e.getMessage());
 						}
 						i = map.get("Key0").size();
 						break;
@@ -160,7 +166,7 @@ public class Main extends ui.CommandLineFunctions {
 	}
 	
 	@EntryPoint(
-			keys = {"null", "-c", "--cmd"},
+			keys = {"CMD", "-c", "--cmd"},
 			describtion = "run with cmd"
 			)
 	public static void runWithCmd() {

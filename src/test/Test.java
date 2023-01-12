@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import annotationen.CheckStringIO;
 import annotationen.EntryPoint;
 import ui.CommandLineFunctions;
 import interfaces.Collect;
@@ -30,14 +31,14 @@ public class Test extends CommandLineFunctions implements Collect {
 	private List<Set<Integer>> indexSetFolders;
 	
 	@EntryPoint(
-			keys = {"TEST", "-t", "--test"},
+			keys = {"null", "-t", "--test"},
 			describtion = "Run Tests",
 			isMainClass = false
 			)
 	public static void test() {
-		p("start test");
-		testIO(Collect.class);
-		testIO(Recovery.class);
+		p("----- start test -----");
+		testIO(Collect.class, new Collect() {});
+		testIO(Recovery.class, new Recovery() {});
 		new Test();
 	}
 	
@@ -80,10 +81,10 @@ public class Test extends CommandLineFunctions implements Collect {
 		new File("testSpace/rec").mkdir();
 	}
 	
-	private static <T> void testIO(Class<T> c) {
+	private static <T> void testIO(Class<T> c, Object objFromClass) {
 		Method[] methoden = c.getDeclaredMethods();
 		for (Method m : methoden) {
-			annotationen.CheckStringIO me = m.getAnnotation(annotationen.CheckStringIO.class);
+			CheckStringIO me = m.getAnnotation(CheckStringIO.class);
 			if (me != null) {
 				String[] testInput = me.parameter();
 				String rightOutput = me.returnValue();
@@ -92,15 +93,15 @@ public class Test extends CommandLineFunctions implements Collect {
 					String res = null;
 					switch(anzahlParameter) {
 					case 1:
-						if (m.invoke(testInput[0]) instanceof String) {
-							res = (String) m.invoke(testInput[0]);
+						if (m.invoke(objFromClass, testInput[0]) instanceof String) {
+							res = (String) m.invoke(objFromClass, testInput[0]);
 						} else {
 							p("ERROR: Fehlerhafter Datentyp -> " + m.invoke(testInput[0]).getClass());
 						}
 						break;
 					case 2:
-						if (m.invoke(testInput[0], testInput[1]) instanceof String) {
-							res = (String) m.invoke(testInput[0], testInput[1]);
+						if (m.invoke(objFromClass, testInput[0], testInput[1]) instanceof String) {
+							res = (String) m.invoke(objFromClass, testInput[0], testInput[1]);
 						} else {
 							p("ERROR: Fehlerhafter Datentyp -> " + m.invoke(testInput[0], testInput[1]).getClass());
 						}
