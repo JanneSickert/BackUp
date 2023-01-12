@@ -33,7 +33,7 @@ import annotationen.EntryPoint;
 		author = "Janne", 
 		version = "3.0.0", 
 		comment = "Gradle Project",
-		compilerVersion = "Java 8")
+		compilerVersion = "Java 9")
 public class Main extends ui.CommandLineFunctions {
 
 	private static String rootSource = null;
@@ -55,7 +55,7 @@ public class Main extends ui.CommandLineFunctions {
 		printInfos();
 		createHashMap();
 		map.get("Klasse").add(Main.class);
-		map.get("Klasse").add(annotationen.Comment.class);
+		map.get("Klasse").add(comment.CreateHTML.class);
 		map.get("Klasse").add(test.Test.class);
 		Iterator<Object> iterator = map.get("Klasse").iterator();
 		while (iterator.hasNext()) {
@@ -141,7 +141,7 @@ public class Main extends ui.CommandLineFunctions {
 	}
 
 	@EntryPoint(
-			keys = {"help", "--help", "-h"},
+			keys = {"HELP", "-h", "--help"},
 			describtion = "show parameter options"
 			)
 	public static void help() {
@@ -151,7 +151,7 @@ public class Main extends ui.CommandLineFunctions {
 	}
 	
 	@EntryPoint(
-			keys = {"--gui", "gui", "-g"},
+			keys = {"GUI", "-g", "--gui"},
 			describtion = "run with GUI"
 			)
 	public static void runWithGui() {
@@ -160,7 +160,7 @@ public class Main extends ui.CommandLineFunctions {
 	}
 	
 	@EntryPoint(
-			keys = {"CMD", "cmd", "-c"},
+			keys = {"null", "-c", "--cmd"},
 			describtion = "run with cmd"
 			)
 	public static void runWithCmd() {

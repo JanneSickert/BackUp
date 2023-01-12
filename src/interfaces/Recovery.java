@@ -2,11 +2,20 @@ package interfaces;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import annotationen.CheckStringIO;
 import enums.SettingType;
 import main.Main;
 
 public interface Recovery extends PathList, Access {
 
+	@CheckStringIO(
+			returnValue = "C:/aa/bb", 
+			parameter = { 
+					"C:/aa/bb/text.txt"
+					},
+			anzahlParameter = 1
+			)
 	default public String getFolderPath(String path) {
 		int lastSlash = -1;
 		for (int i = path.length() - 1; i > 0; i--) {

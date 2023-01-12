@@ -5,7 +5,7 @@ import annotationen.EntryPoint;
 public class CreateHTML {
 
 	@EntryPoint(
-			keys = {"doku", "DOKU", "-d"},
+			keys = {"DOKU", "-d", "--doku"},
 			describtion = "Create a project dokumentation in HTML.",
 			isMainClass = false
 			)

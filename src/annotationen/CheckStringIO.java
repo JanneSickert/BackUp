@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 public @interface CheckStringIO {
 
-	String parameter();
+	String[] parameter();
 	String returnValue();
+	int anzahlParameter();
 }

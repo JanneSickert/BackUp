@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import annotationen.CheckStringIO;
 import annotationen.Comment;
 
 public interface Collect {
@@ -30,7 +31,14 @@ public interface Collect {
 			}
 		}
 	}
-
+	
+	@CheckStringIO(returnValue = "aa/bb.txt",
+			parameter = {
+					"C:/backUp/aa/bb.txt",
+					"C:/backUp"
+			},
+			anzahlParameter = 2
+	)
 	default public String getRelPath(String path, String root) {
 		char[] arr = new char[path.length() - root.length() - 1];
 		int index = 0;
