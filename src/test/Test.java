@@ -23,8 +23,10 @@ import interfaces.Collect;
 import interfaces.NewOrUpdate;
 import interfaces.Recovery;
 
-public class Test extends CommandLineFunctions implements Collect {
+public class Test extends CommandLineFunctions implements Collect, Recovery {
 
+	private static final String DUMMY_DATEN = "/home/janne/httrack";
+	
 	private List<File> testFiles = new ArrayList<File>();
 	private List<File> testFolders = new ArrayList<File>();
 	private List<Set<Integer>> indexSetFiles;
@@ -46,27 +48,26 @@ public class Test extends CommandLineFunctions implements Collect {
 		try {
 			collectTestFilePaths();
 			createFoldersForTest();
-			String rootTestFilesSource = new File("../../").getAbsolutePath();
+			String rootTestFilesSource = new File(DUMMY_DATEN).getAbsolutePath();
 			String rootTestFilesDestination = new File("testSpace/src").getAbsolutePath();
+			main.Main.userInterface = new ui.Cmd();
 			for (int setIndex = 0; setIndex < indexSetFiles.size(); setIndex++) {
 				int size = indexSetFiles.get(setIndex).size();
 				String[] relativPath = new String[size];
 				int index = 0;
 				Iterator<Integer> iterator = indexSetFiles.get(setIndex).iterator();
-				if(iterator.hasNext()){
+				while (iterator.hasNext()){
 					relativPath[index] = getRelPath(testFiles.get((int) iterator.next()).getAbsolutePath(), rootTestFilesSource);
 					index++;
 				}
 				for (int i = 0; i < size; i++) {
-					try {
-						Files.copy(
-								new File(rootTestFilesSource + "/" + relativPath[i]).toPath(),
-								new File(rootTestFilesDestination + "/" + relativPath[i]).toPath(),
-								StandardCopyOption.REPLACE_EXISTING
-						);
-					} catch (IOException e) {
-						p("ERROR: Cannot Copy: " + relativPath[i]);
-					}
+					new File(getFolderPath(rootTestFilesDestination + "/" + relativPath[i])).mkdirs();
+				}
+				for (int i = 0; i < size; i++) {
+					main.Main.copy.move(new File(rootTestFilesSource + "/" + relativPath[i]),
+								        new File(rootTestFilesDestination + "/" + relativPath[i]),
+								        null
+					);
 				}
 			}
 		} catch (IOException e) {
@@ -135,15 +136,12 @@ public class Test extends CommandLineFunctions implements Collect {
             numbers.add(i);
         }
         Collections.shuffle(numbers);
-        int from = 0;
+        int from = 0, i;
         for (int zahl : anzahl) {
         	Set<Integer> set = new HashSet<Integer>();
-        	Stream.iterate(from, i -> i + 1).limit(from + zahl - 1).forEach(new Consumer<Integer>() {
-        		  @Override
-        		  public void accept(Integer index) {
-        			  set.add(numbers.get(index));
-        		  }
-        	});
+        	for (i = from; i < from + zahl - 1; i++) {
+        		set.add(numbers.get(i));
+        	}
         	list.add(set);
         	from += zahl;
         }
@@ -161,7 +159,8 @@ public class Test extends CommandLineFunctions implements Collect {
 				testFolders.add(f);
 			}
 		};
-		collectFiles(new File("../../"), nou);
+		collectFiles(new File(DUMMY_DATEN), nou);
+		pArr(testFiles);
 		int size = testFiles.size();
 		indexSetFiles = getRandomNumbers(size, size * 0.5, size * 0.3, size * 0.2);
 		size = testFolders.size();

@@ -11,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -584,22 +585,44 @@ public class Main extends ui.CommandLineFunctions {
 		return recoveryOutputPath;
 	}
 
+	private static LinkedList<Thread> threadListCopy = new LinkedList<Thread>();
+	
+	private static synchronized void addCopyThread(Thread thread) {
+		threadListCopy.add(thread);
+	}
+	
 	public static Move copy = new Move() {
 		@Override
 		public void move(File from, File to, byte[] fileInBytes) {
 			print(from, to);
-			try {
-				Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e) {
-				errorFiles.add(new TwoFiles(from, to));
-			}
+			Thread thread = new Thread(new Runnable() {
+			    public void run() {
+					try {
+						Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+					} catch (IOException e) {
+						addErrorFile(from, to);
+					}
+			    }
+			});
+			thread.start();
+			addCopyThread(thread);
 		}
 
 		@Override
 		public void joinAll() {
-			// Use only one thread.
+			for (Thread the : threadListCopy) {
+				try {
+					the.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	};
+	
+	private static synchronized void addErrorFile(File from, File to) {
+		errorFiles.add(new TwoFiles(from, to));
+	}
 
 	public static NewOrUpdate update = new NewOrUpdate() {
 		@Override
