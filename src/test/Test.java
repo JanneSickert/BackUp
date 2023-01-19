@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,8 +11,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import annotationen.CheckStringIO;
 import annotationen.EntryPoint;
@@ -30,10 +26,11 @@ public class Test extends CommandLineFunctions implements Collect, Recovery {
 	private List<File> testFiles = new ArrayList<File>();
 	private List<File> testFolders = new ArrayList<File>();
 	private List<Set<Integer>> indexSetFiles;
-	private List<Set<Integer>> indexSetFolders;
+	private List<String> folderList = new ArrayList<String>();
+	private List<String> desList = new ArrayList<String>();
 	
 	@EntryPoint(
-			keys = {"null", "-t", "--test"},
+			keys = {"TEST", "-t", "--test"},
 			describtion = "Run Tests",
 			isMainClass = false
 			)
@@ -41,16 +38,22 @@ public class Test extends CommandLineFunctions implements Collect, Recovery {
 		p("----- start test -----");
 		testIO(Collect.class, new Collect() {});
 		testIO(Recovery.class, new Recovery() {});
-		new Test();
+		try {
+			new Test();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
-	private Test() {
+	@SuppressWarnings("unlikely-arg-type")
+	private Test() throws Exception {
 		try {
 			collectTestFilePaths();
 			createFoldersForTest();
 			String rootTestFilesSource = new File(DUMMY_DATEN).getAbsolutePath();
 			String rootTestFilesDestination = new File("testSpace/src").getAbsolutePath();
 			main.Main.userInterface = new ui.Cmd();
+			boolean isSame = false;
 			for (int setIndex = 0; setIndex < indexSetFiles.size(); setIndex++) {
 				int size = indexSetFiles.get(setIndex).size();
 				String[] relativPath = new String[size];
@@ -61,18 +64,63 @@ public class Test extends CommandLineFunctions implements Collect, Recovery {
 					index++;
 				}
 				for (int i = 0; i < size; i++) {
-					new File(getFolderPath(rootTestFilesDestination + "/" + relativPath[i])).mkdirs();
+					String fp = getFolderPath(rootTestFilesDestination + "/" + relativPath[i]);
+					new File(fp).mkdirs();
+					folderList.add(fp);
 				}
 				for (int i = 0; i < size; i++) {
+					String des = rootTestFilesDestination + "/" + relativPath[i];
 					main.Main.copy.move(new File(rootTestFilesSource + "/" + relativPath[i]),
-								        new File(rootTestFilesDestination + "/" + relativPath[i]),
+								        new File(des),
 								        null
 					);
+					desList.add(des);
 				}
+				main.Main.copy.joinAll();
+				isSame = CompareFolders.compare(rootTestFilesSource, DUMMY_DATEN);
 			}
+			if (!isSame) {
+				p("ERROR: The Folders are not the same.");
+			}
+			deleteTestFiles();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@SuppressWarnings("unused")
+	private void createEmptyFolder(String rootTestFilesDestination) {
+		pArr(testFolders);
+		for (File folder : testFolders) {
+			String rel = getRelPath(folder.getAbsolutePath(), DUMMY_DATEN);
+			p("rel ->" + rel);
+			String path = rootTestFilesDestination + "/" + rel;
+			p("path->" + path);
+			File nextFolder = new File(path);
+			if (nextFolder.mkdirs()) {
+				p("The directory was created");
+			} else {
+				p("ERROR: The directory was not created");
+			}
+		}
+	}
+	
+	private void deleteTestFiles() {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for (String des : desList) {
+			new File(des).delete();
+		}
+		for (String des : folderList) {
+			new File(des).delete();
+		}
+		new File("testSpace/src").delete();
+		new File("testSpace/des").delete();
+		new File("testSpace/rec").delete();
+		new File("testSpace").delete();
 	}
 	
 	private void createFoldersForTest() {
@@ -163,7 +211,5 @@ public class Test extends CommandLineFunctions implements Collect, Recovery {
 		pArr(testFiles);
 		int size = testFiles.size();
 		indexSetFiles = getRandomNumbers(size, size * 0.5, size * 0.3, size * 0.2);
-		size = testFolders.size();
-		indexSetFolders = getRandomNumbers(size, size * 0.5, size * 0.3, size * 0.2);
 	}
 }

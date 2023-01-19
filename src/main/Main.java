@@ -167,7 +167,7 @@ public class Main extends ui.CommandLineFunctions {
 	}
 	
 	@EntryPoint(
-			keys = {"CMD", "-c", "--cmd"},
+			keys = {"null", "-c", "--cmd"},
 			describtion = "run with cmd"
 			)
 	public static void runWithCmd() {
